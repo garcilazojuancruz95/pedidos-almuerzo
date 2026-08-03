@@ -1,0 +1,21 @@
+TABLA USUARIOS
+
+Usuarios
+
+id
+
+auth_user_id
+
+nombre
+
+apellido
+
+email
+
+empresa_id
+
+rol_id
+
+activo
+
+fecha_creacion

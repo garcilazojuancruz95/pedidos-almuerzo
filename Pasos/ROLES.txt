@@ -1,0 +1,57 @@
+ROLES
+------
+id
+nombre
+
+        │
+
+        ▼
+
+USUARIOS
+---------
+id
+auth_user_id
+nombre
+apellido
+email
+empresa_id
+rol_id
+activo
+
+        │
+        ├──────────────► EMPRESAS
+        │
+        ▼
+
+PEDIDOS
+
+────────────────────────────────────
+
+ROTISERIAS
+-----------
+id
+nombre
+
+        │
+
+        ▼
+
+PUBLICACIONES
+--------------
+id
+rotiseria_id
+fecha
+menu_texto
+aclaraciones
+publicado_por
+
+        │
+
+        ▼
+
+PUBLICACION_IMAGENES
+---------------------
+id
+publicacion_id
+url
+orden

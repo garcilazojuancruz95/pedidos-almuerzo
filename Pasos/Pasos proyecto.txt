@@ -1,0 +1,13 @@
+1. Diseñar la base de datos
+        ↓
+2. Crear las tablas
+        ↓
+3. Configurar Supabase Auth
+        ↓
+4. Crear el primer Administrador
+        ↓
+5. Hacer el Login
+        ↓
+6. Redireccionar según el rol
+        ↓
+7. Empezar a desarrollar las pantallas
