@@ -1,0 +1,9 @@
+autenticación automática por google
+pedir lista de nomina
+botón de estoy ausente
+operador puede hacer pedidos por otros y vianda adicional
+posibilidad de pedir mas de un pedido
+agregar hora de cierre, lo asigna el operador
+enviar mail al cargar menús
+
+agregar en header y login logo de nasini

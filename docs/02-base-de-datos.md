@@ -69,6 +69,12 @@ Almacena la información de los usuarios que podrán acceder a la plataforma.
 
 La autenticación será administrada mediante Supabase Auth.
 
+Los usuarios serán sincronizados desde Google Workspace.
+
+La plataforma no administrará contraseñas propias.
+
+El acceso se realizará mediante "Iniciar sesión con Google".
+
 Los usuarios podrán encontrarse en dos estados:
 
 - Activo.
@@ -156,20 +162,41 @@ Almacena los pedidos realizados por los usuarios.
 
 Los pedidos solo podrán ser realizados por usuarios con rol **Operador** o **Empleado**.
 
-Cada usuario podrá tener un único pedido por día.
+Cada usuario podrá registrar uno o más pedidos por día.
+
+Los Operadores podrán registrar, modificar y eliminar pedidos en nombre de cualquier usuario.
+
+Los Empleados únicamente podrán administrar sus propios pedidos.
 
 Cada pedido estará asociado a una única rotisería.
 
 ## Campos
 
+| Campo                       |Tipo                      | Descripción                             |
+|-----------------------------|--------------------------|-----------------------------------------|
+| id                          |           UUID           | Identificador del pedido                |
+| usuario_id                  |           UUID           | Usuario que realizó el pedido           |
+| rotiseria_id                |           UUID           | Rotisería seleccionada por el usuario   |
+| pedido                      |           TEXT           | Plato solicitado                        |
+| creado_por                  |           UUID           | Usuario que registró el pedido          |
+| fecha                       |           DATE           | Fecha correspondiente al pedido         |
+| fecha_creacion              |         TIMESTAMP        | Fecha de creación                       |
+| fecha_modificacion          |         TIMESTAMP        | Última modificación                     |
+
+---
+
+# Configuración
+
+Almacena los parámetros generales de funcionamiento de la plataforma.
+
+Existirá un único registro de configuración global para toda la aplicación.
+
+## Campos
+
 | Campo | Tipo | Descripción |
 |--------|------|-------------|
-| id | UUID | Identificador del pedido |
-| usuario_id | UUID | Usuario que realizó el pedido |
-| rotiseria_id | UUID | Rotisería seleccionada por el usuario |
-| pedido | TEXT | Plato solicitado |
-| observaciones | TEXT | Observaciones del usuario |
-| fecha | DATE | Fecha correspondiente al pedido |
+| id | UUID | Identificador único |
+| hora_limite_pedidos | TIME | Hora límite para que los empleados puedan registrar pedidos |
 | fecha_creacion | TIMESTAMP | Fecha de creación |
 | fecha_modificacion | TIMESTAMP | Última modificación |
 
@@ -187,12 +214,15 @@ Cada pedido estará asociado a una única rotisería.
 - Cada pedido pertenece a un único usuario.
 - Cada pedido pertenece a una única rotisería.
 - Una rotisería puede tener muchos pedidos.
+- Un usuario puede registrar pedidos para otro usuario (Operador).
+- La plataforma posee una configuración global.
+- Un usuario puede registrar muchas ausencias.
+- Cada ausencia pertenece a un único usuario.
 
 ---
 
 # Reglas de la base de datos
 
-- Un usuario solo podrá tener un pedido por día.
 - Solo los usuarios activos podrán iniciar sesión.
 - Solo los usuarios con rol **Operador** o **Empleado** podrán registrar pedidos.
 - Todo pedido deberá estar asociado a una única rotisería.
@@ -200,6 +230,13 @@ Cada pedido estará asociado a una única rotisería.
 - Cada rotisería podrá tener una única publicación por día.
 - Una publicación podrá contener imágenes, texto o ambos.
 - El pedido almacenará exactamente el texto ingresado por el usuario.
+- Un usuario podrá registrar múltiples pedidos durante el mismo día.
+- Solo los Operadores podrán registrar pedidos para otros usuarios.
+- Los pedidos dejarán de estar disponibles para los Empleados una vez alcanzada la hora límite configurada.
+- Los Operadores podrán seguir administrando pedidos aun después de la hora límite.
+- Un usuario podrá registrar una única ausencia por día.
+- Los usuarios marcados como ausentes no podrán registrar pedidos ese día.
+- El Operador podrá visualizar el listado de ausencias del día.
 
 ---
 
@@ -218,6 +255,29 @@ Los pedidos, las publicaciones y las imágenes asociadas se eliminarán automát
 - Las relaciones entre tablas se implementarán mediante claves foráneas (Foreign Keys).
 - Todas las tablas utilizarán identificadores UUID.
 - Se crearán índices sobre los campos más consultados para optimizar el rendimiento.
+- Los usuarios serán sincronizados desde Google Workspace.
+- La autenticación se realizará mediante Google OAuth utilizando Supabase Auth.
+- La plataforma enviará una notificación por correo electrónico cuando el Operador publique los menús del día.
+
+---
+
+# Ausencias
+
+Registra los días en que un usuario informa que no asistirá a la oficina.
+
+Cada usuario podrá registrar como máximo una ausencia por día.
+
+Los usuarios con rol Operador podrán visualizar las ausencias del día para conocer qué empleados no participarán de los pedidos.
+
+## Campos
+
+| Campo | Tipo | Descripción |
+|--------|------|-------------|
+| id | UUID | Identificador de la ausencia |
+| usuario_id | UUID | Usuario que informa la ausencia |
+| fecha | DATE | Día de la ausencia |
+| fecha_creacion | TIMESTAMP | Fecha de creación |
+| fecha_modificacion | TIMESTAMP | Última modificación |
 
 ---
 

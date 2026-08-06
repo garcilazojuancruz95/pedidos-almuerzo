@@ -1,0 +1,67 @@
+alta 2019
+* cuentas 2019 al 2020 listo
+* mov 2019 listo
+* mov 2020 listo
+* mov 2021 listo
+* mov 2022 listo
+* mov 2023 listo
+* mov 2024 listo
+* mov 2025 listo
+* mov 2026 listo
+
+alta 2020
+* mov 2020
+* mov 2021
+* mov 2022 
+* mov 2023
+* mov 2024
+* mov 2025
+* mov 2026
+
+alta 2021
+* mov 2021
+* mov 2022 
+* mov 2023
+* mov 2024
+* mov 2025
+* mov 2026
+
+alta 2022
+* mov 2021
+* mov 2022 
+* mov 2023
+* mov 2024
+* mov 2025
+* mov 2026
+
+alta 2023
+* mov 2021
+* mov 2022 
+* mov 2023
+* mov 2024
+* mov 2025
+* mov 2026
+
+alta 2024
+* mov 2021 
+* mov 2022 
+* mov 2023
+* mov 2024
+* mov 2025
+* mov 2026
+
+alta 2025
+* mov 2021
+* mov 2022 
+* mov 2023
+* mov 2024
+* mov 2025
+* mov 2026
+
+alta 2026
+* mov 2021 listo
+* mov 2022 
+* mov 2023
+* mov 2024
+* mov 2025
+* mov 2026

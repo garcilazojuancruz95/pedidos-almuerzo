@@ -40,13 +40,16 @@ Las tareas podrán cambiar de prioridad durante el desarrollo.
 - [ ] Crear índices.
 - [ ] Ejecutar el esquema en Supabase.
 - [ ] Cargar datos iniciales (`seed`).
+- [ ] Crear tabla Configuración.
+- [ ] Crear tabla Ausencias.
 
 ---
 
 # Fase 3 - Autenticación
 
 - [ ] Crear pantalla de inicio de sesión.
-- [ ] Implementar autenticación con Supabase Auth.
+- [ ] Implementar autenticación con Google Workspace mediante Supabase Auth.
+- [ ] Sincronizar usuarios desde Google Workspace.
 - [ ] Implementar cierre de sesión.
 - [ ] Proteger rutas privadas.
 - [ ] Redireccionar según el rol del usuario.
@@ -58,13 +61,13 @@ Las tareas podrán cambiar de prioridad durante el desarrollo.
 ## Usuarios
 
 - [ ] Listar usuarios.
-- [ ] Crear usuario.
 - [ ] Editar usuario.
 - [ ] Activar usuario.
 - [ ] Desactivar usuario.
-- [ ] Restablecer contraseña.
 - [ ] Asignar rol.
 - [ ] Asignar empresa.
+- [ ] Sincronizar usuarios desde Google Workspace.
+- [ ] Buscar usuarios.
 
 ## Empresas
 
@@ -73,12 +76,23 @@ Las tareas podrán cambiar de prioridad durante el desarrollo.
 - [ ] Editar empresa.
 - [ ] Eliminar empresa.
 
+## Roles
+
+- [ ] Listar roles.
+- [ ] Crear rol.
+- [ ] Editar rol.
+- [ ] Eliminar rol.
+
 ## Rotiserías
 
 - [ ] Listar rotiserías.
 - [ ] Crear rotisería.
 - [ ] Editar rotisería.
 - [ ] Eliminar rotisería.
+
+## Configuración
+
+- [ ] Configurar hora límite para pedidos.
 
 ---
 
@@ -91,6 +105,7 @@ Las tareas podrán cambiar de prioridad durante el desarrollo.
 - [ ] Agregar menú escrito.
 - [ ] Agregar aclaraciones.
 - [ ] Mostrar publicaciones del día.
+- [ ] Enviar correo electrónico al publicar los menús.
 
 ---
 
@@ -99,8 +114,6 @@ Las tareas podrán cambiar de prioridad durante el desarrollo.
 - [ ] Crear pedido.
 - [ ] Modificar pedido.
 - [ ] Eliminar pedido.
-- [ ] Seleccionar rotisería.
-- [ ] Mostrar "Mi pedido".
 - [ ] Mostrar listado de pedidos del día.
 - [ ] Mostrar usuarios que aún no realizaron el pedido del día.
 - [ ] Mostrar pedidos agrupados por rotisería.
@@ -109,13 +122,19 @@ Las tareas podrán cambiar de prioridad durante el desarrollo.
 - [ ] Exportar listado a Excel.
 - [ ] Imprimir listado general.
 - [ ] Imprimir listado por rotisería.
+- [ ] Registrar múltiples pedidos por usuario.
+- [ ] Registrar pedidos para otros usuarios.
+- [ ] Registrar pedidos adicionales.
+- [ ] Deshabilitar pedidos al alcanzar la hora límite.
+- [ ] Visualizar usuarios ausentes.
+- [ ] Marcar "No asistiré a la oficina".
 
 ---
 
 # Fase 7 - Perfil
 
 - [ ] Mostrar datos del usuario.
-- [ ] Cambiar contraseña.
+- [ ] Cerrar sesión.
 
 ---
 
@@ -125,8 +144,10 @@ Las tareas podrán cambiar de prioridad durante el desarrollo.
 - [ ] Adaptar Dashboard.
 - [ ] Adaptar Publicaciones.
 - [ ] Adaptar Menús del día.
-- [ ] Adaptar Mi pedido.
 - [ ] Adaptar Panel de Administración.
+- [ ] Adaptar Gestión de Usuarios.
+- [ ] Adaptar Gestión de Rotiserías.
+- [ ] Adaptar Configuración.
 
 ---
 
@@ -148,6 +169,13 @@ Las tareas podrán cambiar de prioridad durante el desarrollo.
 - [ ] Probar exportación a Excel.
 - [ ] Probar impresión.
 - [ ] Probar funcionamiento en dispositivos móviles.
+- [ ] Probar autenticación con Google.
+- [ ] Probar sincronización de usuarios.
+- [ ] Probar múltiples pedidos por usuario.
+- [ ] Probar registro de pedidos por Operador.
+- [ ] Probar hora límite de pedidos.
+- [ ] Probar envío de correos electrónicos.
+- [ ] Probar registro de ausencias.
 
 ---
 
@@ -166,4 +194,8 @@ Las tareas podrán cambiar de prioridad durante el desarrollo.
 - [ ] Implementar notificaciones Push.
 - [ ] Notificar cuando el pedido esté listo.
 - [ ] Agregar estadísticas.
-- [ ] Agregar configuración general.
+- [ ] Historial de pedidos.
+- [ ] Historial de publicaciones.
+- [ ] Auditoría de acciones.
+- [ ] Dashboard con estadísticas.
+- [ ] Reportes por empresa.

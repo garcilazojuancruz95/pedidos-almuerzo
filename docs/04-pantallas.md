@@ -14,13 +14,11 @@ El acceso a cada pantalla dependerá del rol del usuario autenticado.
 
 Será la pantalla de acceso a la plataforma.
 
-Todos los usuarios deberán autenticarse mediante correo electrónico y contraseña.
+Todos los usuarios deberán autenticarse utilizando su cuenta corporativa de Google Workspace mediante "Iniciar sesión con Google".
 
 ## Funcionalidades
 
-- Ingresar correo electrónico.
-- Ingresar contraseña.
-- Iniciar sesión.
+- Iniciar sesión con Google.
 - Cerrar sesión.
 
 ## Acceso
@@ -43,9 +41,8 @@ Mostrará las opciones disponibles según el rol del usuario autenticado.
 
 Podrá acceder a:
 
-- Gestión de Usuarios.
 - Gestión de Empresas.
-- Gestión de Rotiserías.
+- Gestión de Roles.
 
 ## Operador
 
@@ -54,13 +51,15 @@ Podrá acceder a:
 - Publicaciones.
 - Pedidos del día.
 - Mi pedido.
+- Gestión de Usuarios.
+- Gestión de Rotiserías.
+- Configuración.
 
 ## Empleado
 
 Podrá acceder a:
 
-- Menús del día.
-- Mi pedido.
+- Publicaciones.
 
 ---
 
@@ -72,17 +71,20 @@ Permitirá administrar los usuarios de la plataforma.
 
 ## Funcionalidades
 
-- Crear usuario.
 - Editar usuario.
 - Activar usuario.
 - Desactivar usuario.
-- Restablecer contraseña.
 - Asignar rol.
 - Cambiar empresa.
+- Visualizar usuarios sincronizados desde Google Workspace.
+- Habilitar usuario.
+- Deshabilitar usuario.
+- Asignar empresa.
+- Asignar rol.
 
 ## Acceso
 
-Solo Administrador.
+Solo Operador.
 
 ---
 
@@ -118,7 +120,7 @@ Permitirá administrar las rotiserías disponibles.
 
 ## Acceso
 
-Solo Administrador.
+Solo Operador.
 
 ---
 
@@ -142,6 +144,7 @@ Cada publicación podrá contener:
 - Subir imágenes.
 - Escribir el menú.
 - Agregar aclaraciones.
+- Enviar notificación por correo al finalizar la publicación.
 
 ## Acceso
 
@@ -173,29 +176,7 @@ Cada publicación mostrará:
 
 ---
 
-# 8. Mi pedido
-
-## Descripción
-
-Permitirá registrar y administrar el pedido correspondiente al día.
-
-## Funcionalidades
-
-- Seleccionar la rotisería.
-- Escribir el pedido.
-- Agregar observaciones.
-- Guardar pedido.
-- Modificar pedido.
-- Eliminar pedido.
-
-## Acceso
-
-- Operador.
-- Empleado.
-
----
-
-# 9. Pedidos del día
+# 8. Pedidos del día
 
 ## Descripción
 
@@ -220,6 +201,12 @@ Permitirá visualizar los pedidos de forma general o agrupados por rotisería.
 - Exportar a Excel.
 - Imprimir listado general.
 - Imprimir listado por rotisería.
+- Crear pedido manual.
+- Registrar pedido para otro usuario.
+- Registrar pedidos adicionales.
+- Editar cualquier pedido.
+- Eliminar cualquier pedido.
+- Visualizar usuarios ausentes.
 
 ## Acceso
 
@@ -227,7 +214,7 @@ Solo Operador.
 
 ---
 
-# 10. Perfil
+# 9. Perfil
 
 ## Descripción
 
@@ -235,13 +222,11 @@ Permitirá al usuario consultar su información personal.
 
 ## Funcionalidades
 
-- Buscar.
-- Filtrar por empresa.
-- Ver pedidos agrupados por rotisería.
-- Visualizar usuarios pendientes de realizar el pedido.
-- Exportar a Excel.
-- Imprimir listado general.
-- Imprimir listado por rotisería.
+- Visualizar nombre.
+- Visualizar correo electrónico.
+- Visualizar empresa.
+- Visualizar rol.
+- Cerrar sesión.
 
 ## Acceso
 
@@ -255,6 +240,5 @@ Permitirá al usuario consultar su información personal.
 
 Estas pantallas no formarán parte de la primera versión (MVP).
 
-- Configuración general.
 - Estadísticas.
 - Centro de notificaciones.

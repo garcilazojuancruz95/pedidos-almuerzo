@@ -44,10 +44,12 @@ CREATE TABLE usuarios (
 
     email VARCHAR(255) NOT NULL UNIQUE,
 
-    empresa_id UUID NOT NULL,
-    rol_id UUID NOT NULL,
+    empresa_id UUID,
+    rol_id UUID,
 
-    activo BOOLEAN NOT NULL DEFAULT TRUE,
+    activo BOOLEAN NOT NULL DEFAULT FALSE,
+
+    ultimo_acceso TIMESTAMP,
 
     fecha_creacion TIMESTAMP NOT NULL DEFAULT NOW(),
     fecha_modificacion TIMESTAMP NOT NULL DEFAULT NOW(),
@@ -141,7 +143,7 @@ CREATE TABLE pedidos (
     
     pedido TEXT NOT NULL,
 
-    observaciones TEXT,
+    creado_por UUID NOT NULL,
 
     fecha DATE NOT NULL,
 
@@ -149,15 +151,60 @@ CREATE TABLE pedidos (
 
     fecha_modificacion TIMESTAMP NOT NULL DEFAULT NOW(),
 
+    CONSTRAINT fk_pedido_creado_por
+        FOREIGN KEY (creado_por)
+        REFERENCES usuarios(id),
+
     CONSTRAINT fk_pedido_usuario
         FOREIGN KEY (usuario_id)
         REFERENCES usuarios(id),
 
     CONSTRAINT fk_pedido_rotiseria
         FOREIGN KEY (rotiseria_id)
-        REFERENCES rotiserias(id),
+        REFERENCES rotiserias(id)
 
-    CONSTRAINT uq_pedido_usuario_fecha
+);
+
+-- =====================================================
+-- TABLA: configuracion
+-- =====================================================
+
+CREATE TABLE configuracion (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+
+    hora_limite_pedidos TIME NOT NULL,
+
+    fecha_creacion TIMESTAMP NOT NULL DEFAULT NOW(),
+
+    fecha_modificacion TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+-- =====================================================
+-- TABLA: ausencias
+-- =====================================================
+
+CREATE TABLE ausencias (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+
+    usuario_id UUID NOT NULL,
+
+    informado_por UUID NOT NULL,
+
+    fecha DATE NOT NULL,
+
+    fecha_creacion TIMESTAMP NOT NULL DEFAULT NOW(),
+
+    fecha_modificacion TIMESTAMP NOT NULL DEFAULT NOW(),
+
+    CONSTRAINT fk_ausencia_usuario
+        FOREIGN KEY (usuario_id)
+        REFERENCES usuarios(id),
+
+    CONSTRAINT fk_ausencia_informado_por
+        FOREIGN KEY (informado_por)
+        REFERENCES usuarios(id),
+
+    CONSTRAINT uq_ausencia_usuario_fecha
         UNIQUE (usuario_id, fecha)
 );
 
@@ -186,3 +233,8 @@ CREATE INDEX idx_pedidos_rotiseria
 CREATE INDEX idx_pedidos_fecha
     ON pedidos (fecha);
 
+CREATE INDEX idx_ausencias_usuario
+    ON ausencias (usuario_id);
+
+CREATE INDEX idx_ausencias_fecha
+    ON ausencias (fecha);

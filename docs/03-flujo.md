@@ -40,6 +40,8 @@ Cada rotisería podrá tener una única publicación por día.
 
 Una vez publicada, los usuarios con rol Operador y Empleado podrán visualizarla.
 
+Al finalizar la publicación de los menús del día, la plataforma enviará una notificación por correo electrónico a todos los usuarios activos, informando que ya pueden realizar sus pedidos.
+
 ---
 
 ## 3. Visualización
@@ -47,6 +49,10 @@ Una vez publicada, los usuarios con rol Operador y Empleado podrán visualizarla
 Los usuarios con rol Operador y Empleado iniciarán sesión.
 
 La plataforma mostrará todas las publicaciones correspondientes al día.
+
+Sobre cada publicación se mostrará un campo de texto para registrar el pedido correspondiente a esa rotisería.
+
+Los usuarios podrán registrar uno o más pedidos, incluso en distintas rotiserías.
 
 Cada publicación mostrará:
 
@@ -59,23 +65,31 @@ Cada publicación mostrará:
 
 ## 4. Realización del pedido
 
-Los usuarios con rol Operador y Empleado podrán realizar un único pedido por día.
+Los usuarios con rol Operador y Empleado podrán registrar uno o más pedidos durante el día.
 
-Para ello deberán:
+Cada publicación dispondrá de un campo de texto donde el usuario ingresará libremente el pedido.
 
-- Seleccionar la rotisería.
-- Escribir el plato que desean solicitar.
-- Agregar observaciones (opcional).
+No será obligatorio solicitar un plato publicado.
 
-No será obligatorio solicitar una comida publicada.
+El sistema permitirá escribir libremente cualquier pedido.
 
-El sistema permitirá escribir libremente el nombre del plato.
+Mientras no se alcance la hora límite configurada, los Empleados podrán crear, modificar y eliminar sus propios pedidos.
+
+Una vez alcanzada la hora límite, los campos de ingreso quedarán deshabilitados para los Empleados.
+
+Los Operadores podrán seguir administrando los pedidos en cualquier momento.
 
 ---
 
 ## 5. Administración de pedidos
 
 Los Operadores podrán consultar el listado completo de pedidos del día.
+
+Los Operadores podrán registrar pedidos en nombre de cualquier usuario.
+
+También podrán modificar o eliminar cualquier pedido.
+
+Los Operadores podrán registrar pedidos adicionales cuando sea necesario.
 
 El listado mostrará, como mínimo:
 
@@ -89,6 +103,8 @@ También podrán visualizar automáticamente los pedidos agrupados por rotiserí
 
 Los Operadores también podrán registrar, modificar y eliminar su propio pedido.
 
+El Operador podrá seguir modificando el listado de pedidos incluso después de la hora límite, para contemplar correcciones, pedidos olvidados o pedidos adicionales.
+
 ---
 
 ## 6. Exportación
@@ -101,14 +117,27 @@ Los Operadores podrán:
 
 ---
 
+## 7. Ausencias
+
+Los usuarios con rol Empleado podrán indicar que no asistirán a la oficina durante el día.
+
+Cuando un usuario informe su ausencia:
+
+- No podrá registrar pedidos.
+- Los campos de ingreso quedarán deshabilitados.
+- El Operador visualizará el listado de usuarios ausentes.
+
+---
+
 # Reglas de negocio
 
 ## Usuarios
 
-- Todo usuario deberá iniciar sesión para acceder a la plataforma.
+- Todo usuario deberá iniciar sesión utilizando su cuenta corporativa de Google Workspace.
 - Cada usuario tendrá un único rol.
 - Cada usuario pertenecerá a una única empresa.
 - Solo los usuarios activos podrán iniciar sesión.
+- La nómina de usuarios será sincronizada desde Google Workspace.
 
 ---
 
@@ -118,22 +147,15 @@ Será un usuario técnico destinado exclusivamente a la administración de la pl
 
 Podrá:
 
-- Crear usuarios.
-- Editar usuarios.
-- Activar o desactivar usuarios.
-- Restablecer contraseñas.
-- Asignar roles.
-- Crear, editar y eliminar empresas.
-- Crear, editar y eliminar rotiserías.
+- Administrar empresas.
+- Administrar roles.
 
-No podrá:
+No puede
 
-- Publicar menús.
-- Ver pedidos.
-- Gestionar pedidos.
-- Exportar pedidos.
-- Imprimir pedidos.
-- Realizar pedidos.
+- Usuarios.
+- Rotiserías.
+- Pedidos.
+- Publicaciones.
 
 ---
 
@@ -150,6 +172,11 @@ Podrá:
 - Exportar pedidos.
 - Imprimir pedidos.
 - Realizar, modificar y eliminar su propio pedido.
+- Administrar usuarios.
+- Administrar rotiserías.
+- Registrar pedidos para cualquier usuario.
+- Registrar pedidos adicionales.
+- Configurar la hora límite para pedidos.
 
 No podrá:
 
@@ -166,11 +193,12 @@ No podrá:
 Podrá:
 
 - Visualizar las publicaciones del día.
-- Seleccionar una rotisería.
 - Realizar un pedido.
 - Modificar su propio pedido.
 - Eliminar su propio pedido.
 - Agregar observaciones.
+- Registrar uno o más pedidos.
+- Informar que no asistirá a la oficina.
 
 No podrá:
 
@@ -196,12 +224,12 @@ No podrá:
 
 ## Pedidos
 
-- Solo los usuarios con rol Operador o Empleado podrán registrar pedidos.
-- Cada usuario podrá tener un único pedido por día.
-- Todo pedido deberá estar asociado a una única rotisería.
-- El pedido almacenará exactamente el texto ingresado por el usuario.
-- El usuario podrá agregar observaciones.
-- El usuario podrá modificar o eliminar su pedido en cualquier momento.
+- Solo Operadores y Empleados podrán registrar pedidos.
+- Un usuario podrá registrar múltiples pedidos durante el mismo día.
+- Cada pedido pertenecerá a una única rotisería.
+- El pedido almacenará exactamente el texto ingresado.
+- El Operador podrá crear, modificar y eliminar cualquier pedido.
+- Los Empleados solo podrán administrar sus propios pedidos hasta la hora límite configurada.
 
 ---
 
@@ -218,3 +246,18 @@ Los pedidos, las publicaciones y las imágenes asociadas se eliminarán automát
 - Todas las operaciones requerirán un usuario autenticado.
 - Cada usuario solo podrá acceder a la información permitida por su rol.
 - Los permisos estarán determinados por el rol asignado al usuario.
+
+---
+
+## Notificaciones
+
+- Al publicarse los menús del día se enviará un correo electrónico a todos los usuarios activos.
+- La notificación indicará que los pedidos ya pueden realizarse desde la plataforma.
+
+---
+
+## Ausencias
+
+- Un usuario podrá informar una única ausencia por día.
+- Los usuarios ausentes no podrán registrar pedidos.
+- Los Operadores podrán visualizar el listado de ausencias del día.
