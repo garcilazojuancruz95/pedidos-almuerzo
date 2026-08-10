@@ -1,45 +1,89 @@
 import { createContext, useContext, useEffect, useState } from "react";
+
 import {
-    getSession,
-    onAuthStateChange,
+  getSession,
+  onAuthStateChange,
+  signOut,
 } from "../services/auth.service";
+
+import {
+  obtenerUsuarioPorAuthId,
+  actualizarUltimoAcceso,
+  usuarioPuedeIngresar,
+} from "../services/usuario.service";
 
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-    const [session, setSession] = useState(null);
-    const [loading, setLoading] = useState(true);
+  const [session, setSession] = useState(null);
+  const [usuario, setUsuario] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [mensajeAcceso, setMensajeAcceso] = useState("");
 
-    useEffect(() => {
-        async function loadSession() {
-            const session = await getSession();
-            setSession(session);
-            setLoading(false);
-        }
+  async function cargarUsuario(session) {
+    if (!session?.user) {
+      setUsuario(null);
+      setMensajeAcceso("");
+      return;
+    }
 
-        loadSession();
+    const usuario = await obtenerUsuarioPorAuthId(session.user.id);
 
-        const {
-            data: { subscription },
-        } = onAuthStateChange((_event, session) => {
-            setSession(session);
-        });
+    const resultado = usuarioPuedeIngresar(usuario);
 
-        return () => subscription.unsubscribe();
-    }, []);
+    if (!resultado.ok) {
+      setMensajeAcceso(resultado.mensaje);
+      await signOut();
+      setUsuario(null);
+      return;
+    }
 
-    return (
-        <AuthContext.Provider
-        value={{
-            session,
-            loading,
-        }}
-        >
-        {children}
-        </AuthContext.Provider>
-    );
+    await actualizarUltimoAcceso(usuario.id);
+
+    setMensajeAcceso("");
+    setUsuario(usuario);
+  }
+
+  useEffect(() => {
+    async function iniciar() {
+      const session = await getSession();
+
+      setSession(session);
+
+      await cargarUsuario(session);
+
+      setLoading(false);
+    }
+
+    iniciar();
+
+    const {
+      data: { subscription },
+    } = onAuthStateChange(async (_event, session) => {
+      setSession(session);
+
+      await cargarUsuario(session);
+
+      setLoading(false);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  return (
+    <AuthContext.Provider
+      value={{
+        session,
+        usuario,
+        loading,
+        mensajeAcceso,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
 export function useAuth() {
-    return useContext(AuthContext)
+  return useContext(AuthContext);
 }
