@@ -2,6 +2,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import OperatorLayout from "../layouts/OperatorLayout";
 
+import ProtectedRoute from "../components/ProtectedRoute";
+
 import Dashboard from "../pages/Dashboard";
 import Login from "../pages/Login";
 import Publications from "../pages/Publications";
@@ -14,11 +16,18 @@ export default function AppRoutes() {
   return (
     <BrowserRouter>
       <Routes>
+
         {/* Login */}
         <Route path="/login" element={<Login />} />
 
         {/* Operador */}
-        <Route element={<OperatorLayout />}>
+        <Route
+          element={
+            <ProtectedRoute>
+              <OperatorLayout />
+            </ProtectedRoute>
+          }
+        >
           <Route path="/" element={<Dashboard />} />
           <Route path="/publications" element={<Publications />} />
           <Route path="/my-order" element={<MyOrder />} />
@@ -28,6 +37,7 @@ export default function AppRoutes() {
 
         {/* Página no encontrada */}
         <Route path="*" element={<NotFound />} />
+
       </Routes>
     </BrowserRouter>
   );
