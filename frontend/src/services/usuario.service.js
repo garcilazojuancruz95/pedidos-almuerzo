@@ -1,35 +1,39 @@
 import { supabase } from "../lib/supabase";
 
-export  async function obtenerUsuarioPorAuthId(authUserId) {
-    const { data,error } = await supabase
-        .from("usuarios")
-        .select(`
-            *,
-            roles(*),
-            empresas(*)
-        `)
-        .eq("auth_user_id", authUserId)
-        .single();
+export async function obtenerUsuarioPorAuthId(authUserId) {
+  const { data, error } = await supabase
+    .from("usuarios")
+    .select(`
+      *,
+      roles(*),
+      empresas(*)
+    `)
+    .eq("auth_user_id", authUserId)
+    .single();
 
-    if (error) {
-        return null;
-    }
+  if (error) {
+    return null;
+  }
 
-    return data;
+  return data;
 }
 
-// export async function actualizarUltimoAcceso(usuarioId) {
-//   const { error } = await supabase
-//     .from("usuarios")
-//     .update({
-//       ultimo_acceso: new Date().toISOString(),
-//     })
-//     .eq("id", usuarioId);
+export async function obtenerUsuarios() {
+  const { data, error } = await supabase
+    .from("usuarios")
+    .select(`
+      *,
+      roles(*),
+      empresas(*)
+    `)
+    .order("apellido", { ascending: true });
 
-//   if (error) {
-//     throw error;
-//   }
-// }
+  if (error) {
+    throw error;
+  }
+
+  return data;
+}
 
 export function usuarioPuedeIngresar(usuario) {
   if (!usuario) {
