@@ -31,7 +31,6 @@ export function AuthProvider({ children }) {
 
     if (!resultado.ok) {
       setMensajeAcceso(resultado.mensaje);
-      await signOut();
       setUsuario(null);
       return;
     }
