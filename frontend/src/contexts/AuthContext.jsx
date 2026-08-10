@@ -8,10 +8,8 @@ import {
 
 import {
   obtenerUsuarioPorAuthId,
-  actualizarUltimoAcceso,
   usuarioPuedeIngresar,
 } from "../services/usuario.service";
-
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
@@ -37,8 +35,6 @@ export function AuthProvider({ children }) {
       setUsuario(null);
       return;
     }
-
-    await actualizarUltimoAcceso(usuario.id);
 
     setMensajeAcceso("");
     setUsuario(usuario);

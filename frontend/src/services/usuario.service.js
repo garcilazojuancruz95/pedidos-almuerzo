@@ -5,7 +5,7 @@ export  async function obtenerUsuarioPorAuthId(authUserId) {
         .from("usuarios")
         .select(`
             *,
-            rolers(*),
+            roles(*),
             empresas(*)
         `)
         .eq("auth_user_id", authUserId)
@@ -18,18 +18,18 @@ export  async function obtenerUsuarioPorAuthId(authUserId) {
     return data;
 }
 
-export async function actualizarUltimoAcceso(usuarioId) {
-  const { error } = await supabase
-    .from("usuarios")
-    .update({
-      ultimo_acceso: new Date().toISOString(),
-    })
-    .eq("id", usuarioId);
+// export async function actualizarUltimoAcceso(usuarioId) {
+//   const { error } = await supabase
+//     .from("usuarios")
+//     .update({
+//       ultimo_acceso: new Date().toISOString(),
+//     })
+//     .eq("id", usuarioId);
 
-  if (error) {
-    throw error;
-  }
-}
+//   if (error) {
+//     throw error;
+//   }
+// }
 
 export function usuarioPuedeIngresar(usuario) {
   if (!usuario) {
