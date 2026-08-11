@@ -10,6 +10,7 @@ import {
   obtenerUsuarioPorAuthId,
   usuarioPuedeIngresar,
 } from "../services/usuario.service";
+
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
@@ -31,6 +32,9 @@ export function AuthProvider({ children }) {
 
     if (!resultado.ok) {
       setMensajeAcceso(resultado.mensaje);
+
+      await signOut();
+
       setUsuario(null);
       return;
     }
@@ -41,13 +45,19 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     async function iniciar() {
-      const session = await getSession();
+      try {
+        const session = await getSession();
 
-      setSession(session);
+        setSession(session);
 
-      await cargarUsuario(session);
-
-      setLoading(false);
+        await cargarUsuario(session);
+      } catch (error) {
+        console.error("Error al iniciar sesión:", error);
+        setSession(null);
+        setUsuario(null);
+      } finally {
+        setLoading(false);
+      }
     }
 
     iniciar();

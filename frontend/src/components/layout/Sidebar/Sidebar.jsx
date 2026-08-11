@@ -4,6 +4,7 @@ import {
   ClipboardList,
   FileText,
   User,
+  Users,
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
 
@@ -32,6 +33,11 @@ export default function Sidebar() {
         <NavLink to="/daily-orders">
           <FileText size={20} />
           Pedidos del día
+        </NavLink>
+
+        <NavLink to="/users">
+          <Users size={20} />
+          Usuarios
         </NavLink>
 
         <NavLink to="/profile">

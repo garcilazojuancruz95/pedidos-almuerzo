@@ -55,3 +55,18 @@ export function usuarioPuedeIngresar(usuario) {
     mensaje: "",
   };
 }
+
+export async function cambiarEstadoUsuario(usuarioId, activo) {
+  const { data, error } = await supabase
+    .from("usuarios")
+    .update({ activo })
+    .eq("id", usuarioId)
+    .select()
+    .single();
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+}

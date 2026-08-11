@@ -4,6 +4,7 @@ import OperatorLayout from "../layouts/OperatorLayout";
 
 import ProtectedRoute from "../components/ProtectedRoute";
 
+import Users from "../pages/Users";
 import Dashboard from "../pages/Dashboard";
 import Login from "../pages/Login";
 import Publications from "../pages/Publications";
@@ -33,6 +34,7 @@ export default function AppRoutes() {
           <Route path="/my-order" element={<MyOrder />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/daily-orders" element={<DailyOrders />} />
+          <Route path="/users" element={<Users />} />
         </Route>
 
         {/* Página no encontrada */}

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { obtenerUsuarios } from "../../services/usuario.service";
+import { obtenerUsuarios, cambiarEstadoUsuario, } from "../../services/usuario.service";
 import "./Usuarios.css";
+
 
 export default function Usuarios() {
   const [usuarios, setUsuarios] = useState([]);
@@ -22,6 +23,24 @@ export default function Usuarios() {
 
     cargarUsuarios();
   }, []);
+
+  async function cambiarEstado(usuario) {
+    try {
+      const usuarioActualizado = await cambiarEstadoUsuario(
+        usuario.id,
+        !usuario.activo
+      );
+
+        setUsuarios((usuariosActuales) =>
+          usuariosActuales.map((u) =>
+            u.id === usuario.id ? usuarioActualizado : u
+        )
+      );
+    } catch (error) {
+      console.error("Error al cambiar estado:", error);
+      alert("No se pudo cambiar el estado del usuario.");
+    }
+  }
 
   if (loading) {
     return <p>Cargando usuarios...</p>;
@@ -53,6 +72,7 @@ export default function Usuarios() {
               <th>Empresa</th>
               <th>Rol</th>
               <th>Estado</th>
+              <th>Acciones</th>
             </tr>
           </thead>
 
@@ -71,6 +91,14 @@ export default function Usuarios() {
 
                 <td>
                   {usuario.activo ? "Activo" : "Inactivo"}
+                </td>
+                <td>
+                  <button
+                    onClick={() => cambiarEstado(usuario)}
+                    className="usuarios-btn-estado"
+                  >
+                    {usuario.activo ? "Desactivar" : "Activar"}
+                  </button>
                 </td>
               </tr>
             ))}
