@@ -25,6 +25,22 @@
   padding: 10px 18px;
   border-radius: 6px;
   cursor: pointer;
+  margin: 5px;
+}
+
+.usuarios-btn-importar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 18px;
+  border-radius: 6px;
+  border: 1px solid #198754;
+  background: #ffffff;
+  color: #198754;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  margin: 5px;
 }
 
 .usuarios-table-container {
@@ -47,4 +63,171 @@
 
 .usuarios-table th {
   font-weight: 600;
+}
+
+.usuarios-form-container {
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.usuarios-form-container h2 {
+  margin: 0 0 20px;
+  font-size: 20px;
+}
+
+.usuarios-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+}
+
+.usuarios-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.usuarios-form-field label {
+  font-weight: 500;
+}
+
+.usuarios-form-field input,
+.usuarios-form-field select {
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  background: #fff;
+}
+
+.usuarios-form-field input:focus,
+.usuarios-form-field select:focus {
+  outline: none;
+  border-color: #198754;
+}
+
+.usuarios-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.usuarios-btn-cancelar,
+.usuarios-btn-guardar {
+  padding: 10px 18px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.usuarios-btn-cancelar {
+  background: #e9ecef;
+  color: #333;
+}
+
+.usuarios-btn-guardar {
+  background: #198754;
+  color: white;
+}
+
+.usuarios-btn-guardar:hover {
+  background: #157347;
+}
+
+.usuarios-btn-importar:hover {
+  background: #eaf7f0;
+}
+
+.usuarios-nombre-edicion {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;  
+  min-width: 180px;
+}
+
+.usuarios-nombre-edicion input {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.usuarios-table input,
+.usuarios-table select {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px 10px;
+  border: 1px solid #b8b8b8;
+  border-radius: 6px;
+  background-color: #fff;
+  font-size: 14px;
+  color: #222;
+}
+
+.usuarios-table input:focus,
+.usuarios-table select:focus {
+  outline: none;
+  border-color: #198754;
+  box-shadow: 0 0 0 2px rgba(25, 135, 84, 0.15);
+}
+
+.usuarios-table thead th {
+  cursor: pointer;
+  user-select: none;
+}
+
+.usuarios-table thead th:last-child {
+  cursor: default;
+}
+
+.usuarios-filtros th {
+  background: #ffffff;
+  padding: 8px;
+}
+
+.usuarios-filtros input,
+.usuarios-filtros select {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 7px 8px;
+  border: 1px solid #c8c8c8;
+  border-radius: 5px;
+  background: #ffffff;
+  font-size: 13px;
+}
+
+.usuarios-filtros input:focus,
+.usuarios-filtros select:focus {
+  outline: none;
+  border-color: #198754;
+  box-shadow: 0 0 0 2px rgba(25, 135, 84, 0.12);
+}
+
+.usuarios-orden {
+  width: 100%;
+  border: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-weight: 600;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+}
+
+.usuarios-orden:hover {
+  opacity: 0.85;
+}
+
+.usuario-inactivo {
+  background-color: #f3f3f3;
+  color: #777;
+}
+
+.usuarios-propio {
+  color: #999;
+  font-size: 18px;
 }

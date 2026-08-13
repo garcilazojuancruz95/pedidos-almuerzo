@@ -1,0 +1,5 @@
+# Nóminas con datos personales
+nominas/*.xlsx
+
+# Credenciales de Google
+docs/*client_secret*.json
