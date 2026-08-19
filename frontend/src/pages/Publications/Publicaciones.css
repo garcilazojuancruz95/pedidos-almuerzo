@@ -36,16 +36,17 @@
 
 }
 
-.publication-top{
+.publication-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
 
-    display:flex;
-
-    justify-content:space-between;
-
-    align-items:center;
-
-    margin-bottom:20px;
-
+.publication-top h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
 }
 
 .actions{
@@ -86,4 +87,35 @@ pre{
 
     line-height:1.8;
 
+}
+
+.publication-fecha {
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 18px;
+}
+
+.publication-menu {
+  white-space: pre-line;
+  line-height: 1.6;
+  margin-bottom: 18px;
+}
+
+.publication-aclaraciones {
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid #eee;
+  line-height: 1.5;
+}
+
+.publication-aclaraciones strong {
+  display: block;
+  margin-bottom: 6px;
+}
+
+.publication-top .actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
 }
