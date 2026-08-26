@@ -2,12 +2,14 @@ import { useEffect, useState } from "react";
 import "./Publicaciones.css";
 
 import { useAuth } from "../../contexts/AuthContext";
+import ConfirmModal from "../../components/common/ConfirmModal/ConfirmModal";
 
 import {
   obtenerPublicaciones,
   obtenerRotiserias,
   crearPublicacion,
   actualizarPublicacion,
+  eliminarPublicacion,
 } from "../../services/publicacion.service";
 
 import { obtenerUsuarioPorAuthId } from "../../services/usuario.service";
@@ -21,6 +23,8 @@ export default function Publications() {
   const [error, setError] = useState("");
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [editandoId, setEditandoId] = useState(null);
+  const [modalEliminarAbierto, setModalEliminarAbierto] = useState(false);
+  const [publicacionAEliminar, setPublicacionAEliminar] = useState(null);
 
   const [formulario, setFormulario] = useState({
     rotiseriaId: "",
@@ -36,6 +40,42 @@ export default function Publications() {
   aclaraciones: "",
   
   });
+
+  async function confirmarEliminarPublicacion() {
+    try {
+      await eliminarPublicacion(publicacionAEliminar);
+
+      setPublicaciones((actuales) =>
+        actuales.filter(
+          (publicacion) => publicacion.id !== publicacionAEliminar
+        )
+      );
+
+      setModalEliminarAbierto(false);
+      setPublicacionAEliminar(null);
+    } catch (error) {
+      console.error("Error al eliminar publicación:", error);
+      alert("No se pudo eliminar la publicación.");
+    }
+  }
+
+  async function confirmarEliminarPublicacion() {
+    try {
+      await eliminarPublicacion(publicacionAEliminar);
+
+      setPublicaciones((actuales) =>
+        actuales.filter(
+          (publicacion) => publicacion.id !== publicacionAEliminar
+        )
+      );
+
+      setModalEliminarAbierto(false);
+      setPublicacionAEliminar(null);
+    } catch (error) {
+      console.error("Error al eliminar publicación:", error);
+      alert("No se pudo eliminar la publicación.");
+    }
+  }
 
   useEffect(() => {
     async function cargarDatos() {
@@ -309,7 +349,9 @@ function cancelarEdicion() {
                         Editar
                       </button>
 
-                      <button>
+                      <button
+                        onClick={() => solicitarEliminarPublicacion(publicacion.id)}
+                      >
                         Eliminar
                       </button>
                     </>
@@ -400,6 +442,18 @@ function cancelarEdicion() {
           );
         })
       )}
+      <ConfirmModal
+        abierto={modalEliminarAbierto}
+        titulo="Eliminar publicación"
+        mensaje="¿Estás seguro de que querés eliminar esta publicación?"
+        textoConfirmar="Eliminar"
+        textoCancelar="Cancelar"
+        onConfirm={confirmarEliminarPublicacion}
+        onCancel={() => {
+          setModalEliminarAbierto(false);
+          setPublicacionAEliminar(null);
+        }}
+      />
     </div>
   );
 }

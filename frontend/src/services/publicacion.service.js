@@ -94,3 +94,14 @@ export async function actualizarPublicacion(
 
   return data;
 }
+
+export async function eliminarPublicacion(publicacionId) {
+  const { error } = await supabase
+    .from("publicaciones")
+    .delete()
+    .eq("id", publicacionId);
+
+  if (error) {
+    throw error;
+  }
+}
