@@ -3,6 +3,7 @@ import "./Publicaciones.css";
 
 import { useAuth } from "../../contexts/AuthContext";
 import ConfirmModal from "../../components/common/ConfirmModal/ConfirmModal";
+import PublicationCard from "../../components/publications/PublicationCard/PublicationCard";
 
 import {
   obtenerPublicaciones,
@@ -10,6 +11,8 @@ import {
   crearPublicacion,
   actualizarPublicacion,
   eliminarPublicacion,
+  subirImagenPublicacion,
+  guardarImagenPublicacion,
 } from "../../services/publicacion.service";
 
 import { obtenerUsuarioPorAuthId } from "../../services/usuario.service";
@@ -25,6 +28,7 @@ export default function Publications() {
   const [editandoId, setEditandoId] = useState(null);
   const [modalEliminarAbierto, setModalEliminarAbierto] = useState(false);
   const [publicacionAEliminar, setPublicacionAEliminar] = useState(null);
+  const [imagenesSeleccionadas, setImagenesSeleccionadas] = useState([]);
 
   const [formulario, setFormulario] = useState({
     rotiseriaId: "",
@@ -38,25 +42,17 @@ export default function Publications() {
   fecha: "",
   menuTexto: "",
   aclaraciones: "",
-  
   });
 
-  async function confirmarEliminarPublicacion() {
-    try {
-      await eliminarPublicacion(publicacionAEliminar);
+  function manejarSeleccionImagenes(event) {
+    const archivos = Array.from(event.target.files);
 
-      setPublicaciones((actuales) =>
-        actuales.filter(
-          (publicacion) => publicacion.id !== publicacionAEliminar
-        )
-      );
+    setImagenesSeleccionadas(archivos);
+  }
 
-      setModalEliminarAbierto(false);
-      setPublicacionAEliminar(null);
-    } catch (error) {
-      console.error("Error al eliminar publicación:", error);
-      alert("No se pudo eliminar la publicación.");
-    }
+  function solicitarEliminarPublicacion(publicacionId) {
+    setPublicacionAEliminar(publicacionId);
+    setModalEliminarAbierto(true);
   }
 
   async function confirmarEliminarPublicacion() {
@@ -167,10 +163,12 @@ function cancelarEdicion() {
       const usuario = await obtenerUsuarioPorAuthId(session.user.id);
 
       if (!usuario) {
-        throw new Error("No se encontró el usuario de la plataforma.");
+        throw new Error(
+          "No se encontró el usuario de la plataforma."
+        );
       }
 
-      await crearPublicacion({
+      const publicacionCreada = await crearPublicacion({
         rotiseriaId: formulario.rotiseriaId,
         fecha: formulario.fecha,
         menuTexto: formulario.menuTexto,
@@ -178,7 +176,23 @@ function cancelarEdicion() {
         publicadoPor: usuario.id,
       });
 
-      const publicacionesActualizadas = await obtenerPublicaciones();
+      for (let i = 0; i < imagenesSeleccionadas.length; i++) {
+        const archivo = imagenesSeleccionadas[i];
+
+        const imagenSubida = await subirImagenPublicacion(
+          archivo,
+          publicacionCreada.id
+        );
+
+        await guardarImagenPublicacion(
+          publicacionCreada.id,
+          imagenSubida.url,
+          i
+        );
+      }
+
+      const publicacionesActualizadas =
+        await obtenerPublicaciones();
 
       setPublicaciones(publicacionesActualizadas);
 
@@ -188,6 +202,8 @@ function cancelarEdicion() {
         menuTexto: "",
         aclaraciones: "",
       });
+
+      setImagenesSeleccionadas([]);
 
       setMostrarFormulario(false);
 
@@ -278,6 +294,25 @@ function cancelarEdicion() {
               />
             </div>
 
+            <div className="publication-form-field">
+              <label>Imágenes</label>
+
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={manejarSeleccionImagenes}
+              />
+
+              {imagenesSeleccionadas.length > 0 && (
+                <p>
+                  {imagenesSeleccionadas.length} imagen
+                  {imagenesSeleccionadas.length !== 1 ? "es" : ""} seleccionada
+                  {imagenesSeleccionadas.length !== 1 ? "s" : ""}
+                </p>
+              )}
+            </div>
+
             <div className="publication-form-actions">
               <button
                 type="button"
@@ -297,150 +332,20 @@ function cancelarEdicion() {
       {publicaciones.length === 0 ? (
         <p>No hay publicaciones cargadas.</p>
       ) : (
-        publicaciones.map((publicacion) => {
-          const estaEditando = editandoId === publicacion.id;
-
-          return (
-            <div
-              className="publication-card"
-              key={publicacion.id}
-            >
-              <div className="publication-top">
-                {estaEditando ? (
-                  <select
-                    name="rotiseriaId"
-                    value={edicion.rotiseriaId}
-                    onChange={manejarCambioEdicion}
-                  >
-                    {rotiserias.map((rotiseria) => (
-                      <option
-                        key={rotiseria.id}
-                        value={rotiseria.id}
-                      >
-                        {rotiseria.nombre}
-                      </option>
-                    ))}
-                  </select>
-                ) : (
-                  <h2>
-                    🍽{" "}
-                    {publicacion.rotiserias?.nombre || "Sin rotisería"}
-                  </h2>
-                )}
-
-                <div className="actions">
-                  {estaEditando ? (
-                    <>
-                      <button
-                        onClick={() => guardarEdicion(publicacion.id)}
-                      >
-                        Guardar
-                      </button>
-
-                      <button onClick={cancelarEdicion}>
-                        Cancelar
-                      </button>
-                    </>
-                  ) : (
-                    <>
-                      <button
-                        onClick={() => comenzarEdicion(publicacion)}
-                      >
-                        Editar
-                      </button>
-
-                      <button
-                        onClick={() => solicitarEliminarPublicacion(publicacion.id)}
-                      >
-                        Eliminar
-                      </button>
-                    </>
-                  )}
-                </div>
-              </div>
-
-              {publicacion.publicacion_imagenes?.length > 0 && (
-                <div className="publication-images">
-                  {publicacion.publicacion_imagenes
-                    .slice()
-                    .sort((a, b) => a.orden - b.orden)
-                    .map((imagen) => (
-                      <img
-                        key={imagen.id}
-                        src={imagen.url}
-                        alt={`Menú de ${
-                          publicacion.rotiserias?.nombre ||
-                          "rotisería"
-                        }`}
-                      />
-                    ))}
-                </div>
-              )}
-
-              <div className="publication-content">
-                {estaEditando ? (
-                  <div className="publication-form-field">
-                    <label>Fecha</label>
-
-                    <input
-                      type="date"
-                      name="fecha"
-                      value={edicion.fecha}
-                      onChange={manejarCambioEdicion}
-                    />
-                  </div>
-                ) : (
-                  <div className="publication-fecha">
-                    {new Date(
-                      `${publicacion.fecha}T00:00:00`
-                    ).toLocaleDateString("es-AR", {
-                      day: "2-digit",
-                      month: "2-digit",
-                      year: "numeric",
-                    })}
-                  </div>
-                )}
-
-                {estaEditando ? (
-                  <div className="publication-form-field">
-                    <label>Menú</label>
-
-                    <textarea
-                      name="menuTexto"
-                      value={edicion.menuTexto}
-                      onChange={manejarCambioEdicion}
-                      rows="10"
-                    />
-                  </div>
-                ) : (
-                  <div className="publication-menu">
-                    {publicacion.menu_texto}
-                  </div>
-                )}
-
-                {estaEditando ? (
-                  <div className="publication-form-field">
-                    <label>Aclaraciones</label>
-
-                    <textarea
-                      name="aclaraciones"
-                      value={edicion.aclaraciones}
-                      onChange={manejarCambioEdicion}
-                      rows="4"
-                    />
-                  </div>
-                ) : (
-                  publicacion.aclaraciones && (
-                    <div className="publication-aclaraciones">
-                      <strong>Aclaraciones:</strong>
-                      <div>{publicacion.aclaraciones}</div>
-                    </div>
-                  )
-                )}
-              </div>
-            </div>
-          );
-        })
+        publicaciones.map((publicacion) => (
+          <PublicationCard
+            key={publicacion.id}
+            publicacion={publicacion}
+            rotiserias={rotiserias}
+            estaEditando={editandoId === publicacion.id}
+            edicion={edicion}
+            onEditar={comenzarEdicion}
+            onCambioEdicion={manejarCambioEdicion}
+            onGuardar={guardarEdicion}
+            onCancelar={cancelarEdicion}
+            onEliminar={solicitarEliminarPublicacion}
+          />
+        ))
       )}
       <ConfirmModal
         abierto={modalEliminarAbierto}

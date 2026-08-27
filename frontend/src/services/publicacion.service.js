@@ -105,3 +105,58 @@ export async function eliminarPublicacion(publicacionId) {
     throw error;
   }
 }
+
+export async function subirImagenPublicacion(
+  archivo,
+  publicacionId
+) {
+  const extension = archivo.name.split(".").pop();
+
+  const nombreArchivo = `${crypto.randomUUID()}.${extension}`;
+
+  const ruta = `${publicacionId}/${nombreArchivo}`;
+
+  const { error } = await supabase.storage
+    .from("publicaciones")
+    .upload(ruta, archivo, {
+      cacheControl: "3600",
+      upsert: false,
+    });
+
+  if (error) {
+    throw error;
+  }
+
+  const {
+    data: { publicUrl },
+  } = supabase.storage
+    .from("publicaciones")
+    .getPublicUrl(ruta);
+
+  return {
+    ruta,
+    url: publicUrl,
+  };
+}
+
+export async function guardarImagenPublicacion(
+  publicacionId,
+  url,
+  orden
+) {
+  const { data, error } = await supabase
+    .from("publicacion_imagenes")
+    .insert({
+      publicacion_id: publicacionId,
+      url,
+      orden,
+    })
+    .select()
+    .single();
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+}
