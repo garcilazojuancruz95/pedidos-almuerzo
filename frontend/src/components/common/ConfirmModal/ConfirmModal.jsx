@@ -21,13 +21,15 @@ export default function ConfirmModal({
         <p>{mensaje}</p>
 
         <div className="confirm-modal-actions">
-          <button
-            type="button"
-            className="confirm-modal-cancelar"
-            onClick={onCancel}
-          >
-            {textoCancelar}
-          </button>
+          {textoCancelar && (
+            <button
+              type="button"
+              className="confirm-modal-cancelar"
+              onClick={onCancel}
+            >
+              {textoCancelar}
+            </button>
+          )}
 
           <button
             type="button"

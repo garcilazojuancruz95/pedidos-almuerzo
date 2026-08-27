@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./Publicaciones.css";
 
 import { useAuth } from "../../contexts/AuthContext";
@@ -13,12 +14,15 @@ import {
   eliminarPublicacion,
   subirImagenPublicacion,
   guardarImagenPublicacion,
+  obtenerPublicacionPorRotiseriaYFecha,
+  eliminarImagenPublicacion,
 } from "../../services/publicacion.service";
 
 import { obtenerUsuarioPorAuthId } from "../../services/usuario.service";
 
 export default function Publications() {
   const { session } = useAuth();
+  const navigate = useNavigate();
 
   const [publicaciones, setPublicaciones] = useState([]);
   const [rotiserias, setRotiserias] = useState([]);
@@ -29,20 +33,50 @@ export default function Publications() {
   const [modalEliminarAbierto, setModalEliminarAbierto] = useState(false);
   const [publicacionAEliminar, setPublicacionAEliminar] = useState(null);
   const [imagenesSeleccionadas, setImagenesSeleccionadas] = useState([]);
-
+  const [imagenesMarcadasEliminar, setImagenesMarcadasEliminar] = useState([]);
+  const [imagenesNuevasEdicion, setImagenesNuevasEdicion] = useState([]);
+  const [modalPublicacionExistente, setModalPublicacionExistente] = useState(false);
+  const [mensajePublicacionExistente, setMensajePublicacionExistente] = useState("");
+  const [modalExitoAbierto, setModalExitoAbierto] = useState(false);
+  const [publicando, setPublicando] = useState(false);
+  const [modalMensajeAbierto, setModalMensajeAbierto] = useState(false);
+  const [modalMensajeTitulo, setModalMensajeTitulo] = useState("");
+  const [modalMensajeTexto, setModalMensajeTexto] = useState("");
   const [formulario, setFormulario] = useState({
     rotiseriaId: "",
-    fecha: new Date().toISOString().split("T")[0],
     menuTexto: "",
     aclaraciones: "",
   });
 
   const [edicion, setEdicion] = useState({
   rotiseriaId: "",
-  fecha: "",
   menuTexto: "",
   aclaraciones: "",
   });
+
+  function manejarEliminarImagen(imagen) {
+    setImagenesMarcadasEliminar((actuales) => [
+      ...actuales,
+      imagen,
+    ]);
+  }
+
+  function manejarSeleccionImagenesEdicion(event) {
+    const archivos = Array.from(event.target.files);
+
+    setImagenesNuevasEdicion((actuales) => [
+      ...actuales,
+      ...archivos,
+    ]);
+
+    event.target.value = "";
+  }
+
+  function mostrarMensaje(titulo, mensaje) {
+    setModalMensajeTitulo(titulo);
+    setModalMensajeTexto(mensaje);
+    setModalMensajeAbierto(true);
+  }
 
   function manejarSeleccionImagenes(event) {
     const archivos = Array.from(event.target.files);
@@ -69,7 +103,10 @@ export default function Publications() {
       setPublicacionAEliminar(null);
     } catch (error) {
       console.error("Error al eliminar publicación:", error);
-      alert("No se pudo eliminar la publicación.");
+      mostrarMensaje(
+        "Error al eliminar publicación",
+        "No se pudo eliminar la publicación."
+      );
     }
   }
 
@@ -99,10 +136,12 @@ export default function Publications() {
 
     setEdicion({
       rotiseriaId: publicacion.rotiseria_id || "",
-      fecha: publicacion.fecha || "",
       menuTexto: publicacion.menu_texto || "",
       aclaraciones: publicacion.aclaraciones || "",
     });
+
+    setImagenesMarcadasEliminar([]);
+    setImagenesNuevasEdicion([]);
   }
 
   function manejarCambioEdicion(event) {
@@ -123,16 +162,18 @@ export default function Publications() {
     }));
   }
 
-function cancelarEdicion() {
-  setEditandoId(null);
+  function cancelarEdicion() {
+    setEditandoId(null);
 
-  setEdicion({
-    rotiseriaId: "",
-    fecha: "",
-    menuTexto: "",
-    aclaraciones: "",
-  });
-}
+    setEdicion({
+      rotiseriaId: "",
+      menuTexto: "",
+      aclaraciones: "",
+    });
+
+    setImagenesMarcadasEliminar([]);
+    setImagenesNuevasEdicion([]);
+  }
 
   async function guardarEdicion(publicacionId) {
     try {
@@ -141,25 +182,59 @@ function cancelarEdicion() {
         edicion
       );
 
-      setPublicaciones((actuales) =>
-        actuales.map((publicacion) =>
-          publicacion.id === publicacionId
-            ? publicacionActualizada
-            : publicacion
-        )
-      );
+      for (let i = 0; i < imagenesNuevasEdicion.length; i++) {
+        const archivo = imagenesNuevasEdicion[i];
+
+        const imagenSubida = await subirImagenPublicacion(
+          archivo,
+          publicacionId
+        );
+
+        await guardarImagenPublicacion(
+          publicacionId,
+          imagenSubida.url,
+          i
+        );
+      }
+
+      for (const imagen of imagenesMarcadasEliminar) {
+        await eliminarImagenPublicacion(imagen);
+      }
+
+      const publicacionesActualizadas =
+        await obtenerPublicaciones();
+
+      setPublicaciones(publicacionesActualizadas);
 
       setEditandoId(null);
+
+      setImagenesMarcadasEliminar([]);
+      setImagenesNuevasEdicion([]);
+
+      mostrarMensaje(
+        "Publicación actualizada",
+        "La publicación se actualizó correctamente."
+      );
     } catch (error) {
       console.error("Error al actualizar publicación:", error);
-      alert("No se pudo actualizar la publicación.");
+
+      mostrarMensaje(
+        "Error al actualizar publicación",
+        "No se pudo actualizar la publicación."
+      );
     }
   }
 
   async function manejarCrearPublicacion(event) {
     event.preventDefault();
 
+    if (publicando) {
+      return;
+    }
+
     try {
+      setPublicando(true);
+
       const usuario = await obtenerUsuarioPorAuthId(session.user.id);
 
       if (!usuario) {
@@ -168,9 +243,34 @@ function cancelarEdicion() {
         );
       }
 
+      const fechaHoy = new Intl.DateTimeFormat("en-CA", {
+        timeZone: "America/Argentina/Buenos_Aires",
+      }).format(new Date());
+
+      const publicacionExistente =
+        await obtenerPublicacionPorRotiseriaYFecha(
+          formulario.rotiseriaId,
+          fechaHoy
+        );
+
+      if (publicacionExistente) {
+        setMensajePublicacionExistente(
+          `Ya existe una publicación de ${
+            publicacionExistente.rotiserias?.nombre ||
+            "esta rotisería"
+          } para el ${new Date(
+            `${fechaHoy}T00:00:00`
+          ).toLocaleDateString("es-AR")}.`
+        );
+
+        setModalPublicacionExistente(true);
+
+        return;
+      }
+
       const publicacionCreada = await crearPublicacion({
         rotiseriaId: formulario.rotiseriaId,
-        fecha: formulario.fecha,
+        fecha: fechaHoy,
         menuTexto: formulario.menuTexto,
         aclaraciones: formulario.aclaraciones,
         publicadoPor: usuario.id,
@@ -198,7 +298,6 @@ function cancelarEdicion() {
 
       setFormulario({
         rotiseriaId: "",
-        fecha: new Date().toISOString().split("T")[0],
         menuTexto: "",
         aclaraciones: "",
       });
@@ -207,10 +306,16 @@ function cancelarEdicion() {
 
       setMostrarFormulario(false);
 
-      alert("Publicación creada correctamente.");
+      setModalExitoAbierto(true);
     } catch (error) {
       console.error("Error al crear publicación:", error);
-      alert("No se pudo crear la publicación.");
+
+      mostrarMensaje(
+        "Error al crear publicación",
+        "No se pudo crear la publicación."
+      );
+    } finally {
+      setPublicando(false);
     }
   }
 
@@ -258,19 +363,7 @@ function cancelarEdicion() {
                 ))}
               </select>
             </div>
-
-            <div className="publication-form-field">
-              <label>Fecha</label>
-
-              <input
-                type="date"
-                name="fecha"
-                value={formulario.fecha}
-                onChange={manejarCambioFormulario}
-                required
-              />
-            </div>
-
+            
             <div className="publication-form-field">
               <label>Menú</label>
 
@@ -279,7 +372,6 @@ function cancelarEdicion() {
                 value={formulario.menuTexto}
                 onChange={manejarCambioFormulario}
                 rows="8"
-                required
               />
             </div>
 
@@ -321,8 +413,11 @@ function cancelarEdicion() {
                 Cancelar
               </button>
 
-              <button type="submit">
-                Publicar
+              <button
+                type="submit"
+                disabled={publicando}
+              >
+                {publicando ? "Publicando..." : "Publicar"}
               </button>
             </div>
           </form>
@@ -344,6 +439,10 @@ function cancelarEdicion() {
             onGuardar={guardarEdicion}
             onCancelar={cancelarEdicion}
             onEliminar={solicitarEliminarPublicacion}
+            imagenesMarcadasEliminar={imagenesMarcadasEliminar}
+            imagenesNuevasEdicion={imagenesNuevasEdicion}
+            onEliminarImagen={manejarEliminarImagen}
+            onSeleccionarImagenes={manejarSeleccionImagenesEdicion}
           />
         ))
       )}
@@ -358,6 +457,39 @@ function cancelarEdicion() {
           setModalEliminarAbierto(false);
           setPublicacionAEliminar(null);
         }}
+      />
+      <ConfirmModal
+        abierto={modalPublicacionExistente}
+        titulo="Publicación existente"
+        mensaje={mensajePublicacionExistente}
+        textoConfirmar="Entendido"
+        textoCancelar=""
+        onConfirm={() => setModalPublicacionExistente(false)}
+        onCancel={() => setModalPublicacionExistente(false)}
+      />
+      <ConfirmModal
+        abierto={modalExitoAbierto}
+        titulo="Publicación creada"
+        mensaje="La publicación se creó correctamente."
+        textoConfirmar="Entendido"
+        textoCancelar=""
+        onConfirm={() => {
+          setModalExitoAbierto(false);
+          navigate("/publications");
+        }}
+        onCancel={() => {
+          setModalExitoAbierto(false);
+          navigate("/publications");
+        }}
+      />
+      <ConfirmModal
+        abierto={modalMensajeAbierto}
+        titulo={modalMensajeTitulo}
+        mensaje={modalMensajeTexto}
+        textoConfirmar="Entendido"
+        textoCancelar=""
+        onConfirm={() => setModalMensajeAbierto(false)}
+        onCancel={() => setModalMensajeAbierto(false)}
       />
     </div>
   );

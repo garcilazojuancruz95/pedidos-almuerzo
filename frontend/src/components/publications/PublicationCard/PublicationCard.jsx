@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import "./PublicationCard.css";
 
 export default function PublicationCard({
@@ -10,7 +11,26 @@ export default function PublicationCard({
   onGuardar,
   onCancelar,
   onEliminar,
+  onEliminarImagen,
+  imagenesMarcadasEliminar,
+  imagenesNuevasEdicion,
+  onSeleccionarImagenes,
 }) {
+
+  const [previsualizaciones, setPrevisualizaciones] = useState([]);
+
+  useEffect(() => {
+    const urls = imagenesNuevasEdicion.map((archivo) =>
+      URL.createObjectURL(archivo)
+    );
+
+    setPrevisualizaciones(urls);
+
+    return () => {
+      urls.forEach((url) => URL.revokeObjectURL(url));
+    };
+  }, [imagenesNuevasEdicion]);
+
   return (
     <div className="publication-card">
       <div className="publication-top">
@@ -69,46 +89,91 @@ export default function PublicationCard({
         </div>
       </div>
 
-      {publicacion.publicacion_imagenes?.length > 0 && (
+      {(publicacion.publicacion_imagenes?.length > 0 ||
+        (estaEditando && imagenesNuevasEdicion.length > 0)) && (
         <div className="publication-images">
+
           {publicacion.publicacion_imagenes
-            .slice()
+            ?.slice()
             .sort((a, b) => a.orden - b.orden)
-            .map((imagen) => (
-              <img
-                key={imagen.id}
-                src={imagen.url}
-                alt={`Menú de ${
-                  publicacion.rotiserias?.nombre || "rotisería"
-                }`}
-              />
+            .map((imagen) => {
+              const marcada =
+                imagenesMarcadasEliminar.some(
+                  (item) => item.id === imagen.id
+                );
+
+              if (marcada) {
+                return null;
+              }
+
+              return (
+                <div
+                  className="publication-image-item"
+                  key={imagen.id}
+                >
+                  <img
+                    src={imagen.url}
+                    alt={`Menú de ${
+                      publicacion.rotiserias?.nombre ||
+                      "rotisería"
+                    }`}
+                  />
+
+                  {estaEditando && (
+                    <button
+                      type="button"
+                      className="publication-image-delete"
+                      onClick={() => onEliminarImagen(imagen)}
+                    >
+                      Eliminar
+                    </button>
+                  )}
+                </div>
+              );
+            })}
+
+          {estaEditando &&
+            imagenesNuevasEdicion.map((archivo, index) => (
+              <div
+                className="publication-image-item"
+                key={`${archivo.name}-${index}`}
+              >
+                <img
+                  src={previsualizaciones[index]}
+                  alt={archivo.name}
+                />
+
+                <span className="publication-image-new">
+                  Nueva
+                </span>
+              </div>
             ))}
         </div>
       )}
 
-      <div className="publication-content">
-        {estaEditando ? (
-          <div className="publication-form-field">
-            <label>Fecha</label>
+      {estaEditando && (
+        <div className="publication-form-field">
+          <label>Agregar imágenes</label>
 
-            <input
-              type="date"
-              name="fecha"
-              value={edicion.fecha}
-              onChange={onCambioEdicion}
-            />
-          </div>
-        ) : (
-          <div className="publication-fecha">
-            {new Date(
-              `${publicacion.fecha}T00:00:00`
-            ).toLocaleDateString("es-AR", {
-              day: "2-digit",
-              month: "2-digit",
-              year: "numeric",
-            })}
-          </div>
-        )}
+          <input
+            type="file"
+            accept="image/*"
+            multiple
+            onChange={onSeleccionarImagenes}
+          />
+        </div>
+      )}
+
+      <div className="publication-content">
+        <div className="publication-fecha">
+          {new Date(
+            `${publicacion.fecha}T00:00:00`
+          ).toLocaleDateString("es-AR", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+          })}
+        </div>
 
         {estaEditando ? (
           <div className="publication-form-field">

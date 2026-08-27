@@ -1,6 +1,16 @@
 import { supabase } from "../lib/supabase";
 
+function obtenerFechaHoyArgentina() {
+  const hoy = new Date();
+
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: "America/Argentina/Buenos_Aires",
+  }).format(hoy);
+}
+
 export async function obtenerPublicaciones() {
+  const fechaHoy = obtenerFechaHoyArgentina();
+
   const { data, error } = await supabase
     .from("publicaciones")
     .select(`
@@ -9,7 +19,8 @@ export async function obtenerPublicaciones() {
       usuarios(*),
       publicacion_imagenes(*)
     `)
-    .order("fecha", { ascending: false });
+    .eq("fecha", fechaHoy)
+    .order("rotiserias(nombre)", { ascending: true });
 
   if (error) {
     throw error;
@@ -66,7 +77,6 @@ export async function actualizarPublicacion(
   publicacionId,
   {
     rotiseriaId,
-    fecha,
     menuTexto,
     aclaraciones,
   }
@@ -75,7 +85,6 @@ export async function actualizarPublicacion(
     .from("publicaciones")
     .update({
       rotiseria_id: rotiseriaId,
-      fecha,
       menu_texto: menuTexto,
       aclaraciones,
     })
@@ -153,6 +162,57 @@ export async function guardarImagenPublicacion(
     })
     .select()
     .single();
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+}
+
+export async function eliminarImagenPublicacion(imagen) {
+  const prefijo = "/storage/v1/object/public/publicaciones/";
+
+  if (!imagen.url.includes(prefijo)) {
+    throw new Error("No se pudo determinar la ruta de la imagen.");
+  }
+
+  const ruta = decodeURIComponent(
+    imagen.url.split(prefijo)[1]
+  );
+
+  const { error: errorStorage } = await supabase.storage
+    .from("publicaciones")
+    .remove([ruta]);
+
+  if (errorStorage) {
+    throw errorStorage;
+  }
+
+  const { error: errorBaseDatos } = await supabase
+    .from("publicacion_imagenes")
+    .delete()
+    .eq("id", imagen.id);
+
+  if (errorBaseDatos) {
+    throw errorBaseDatos;
+  }
+}
+
+export async function obtenerPublicacionPorRotiseriaYFecha(
+  rotiseriaId,
+  fecha
+) {
+  const { data, error } = await supabase
+    .from("publicaciones")
+    .select(`
+      id,
+      fecha,
+      rotiserias(nombre)
+    `)
+    .eq("rotiseria_id", rotiseriaId)
+    .eq("fecha", fecha)
+    .maybeSingle();
 
   if (error) {
     throw error;

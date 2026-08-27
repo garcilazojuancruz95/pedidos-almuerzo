@@ -116,3 +116,30 @@
   border-radius: 8px;
   object-fit: cover;
 }
+
+.publication-image-item {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.publication-image-delete {
+  padding: 7px 12px;
+  border: none;
+  border-radius: 6px;
+  background: #e9ecef;
+  color: #333;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.publication-image-delete:hover {
+  background: #dee2e6;
+}
+
+.publication-image-new {
+  font-size: 13px;
+  color: #198754;
+  font-weight: 500;
+}
