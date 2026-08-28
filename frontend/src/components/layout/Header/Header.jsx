@@ -1,8 +1,11 @@
 import "./Header.css";
 
 import { signOut } from "../../../services/auth.service";
+import { useAuth } from "../../../contexts/AuthContext";
 
 export default function Header() {
+  const { usuario } = useAuth();
+
   async function handleLogout() {
     try {
       await signOut();
@@ -11,6 +14,8 @@ export default function Header() {
     }
   }
 
+  const rol = usuario?.roles?.nombre || "";
+
   return (
     <header className="header">
       <div>
@@ -18,8 +23,11 @@ export default function Header() {
       </div>
 
       <div className="header-user">
-        <span>Operador</span>
-        <button onClick={handleLogout}>Salir</button>
+        <span>{rol}</span>
+
+        <button onClick={handleLogout}>
+          Salir
+        </button>
       </div>
     </header>
   );

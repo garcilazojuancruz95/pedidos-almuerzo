@@ -4,19 +4,75 @@ import "./MyOrder.css";
 import { obtenerPublicaciones } from "../../services/publicacion.service";
 import { useAuth } from "../../contexts/AuthContext";
 import { obtenerUsuarioPorAuthId } from "../../services/usuario.service";
-import { crearPedido } from "../../services/pedido.service";
+import { 
+  crearPedido,
+  obtenerMisPedidosDelDia,
+  actualizarPedido,
+  eliminarPedido,
+} from "../../services/pedido.service";
+import ConfirmModal from "../../components/common/ConfirmModal/ConfirmModal";
 
 export default function MyOrder() {
   const [publicaciones, setPublicaciones] = useState([]);
   const [pedidos, setPedidos] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [modalConfirmarPedido, setModalConfirmarPedido] = useState(false);
+  const [modalPedidoExitoso, setModalPedidoExitoso] = useState(false);
+  const [modalMensaje, setModalMensaje] = useState("");
+  const [pedidoAEnviar, setPedidoAEnviar] = useState(null);
+  const [nombreRotiseriaPedido, setNombreRotiseriaPedido] = useState("");
   const { session } = useAuth();
+  const [misPedidos, setMisPedidos] = useState([]);
+  const [editandoPedidoId, setEditandoPedidoId] = useState(null);
+  const [textoEdicionPedido, setTextoEdicionPedido] = useState("");
+  const [pedidoAEliminar, setPedidoAEliminar] = useState(null);
+  const [modalConfirmarEdicion, setModalConfirmarEdicion] =
+    useState(false);
+  const [modalEliminarPedido, setModalEliminarPedido] =
+    useState(false);
 
-  async function manejarCrearPedido(publicacionId) {
-    const textoPedido = pedidos[publicacionId]?.trim();
+  async function confirmarEdicionPedido() {
+    if (!editandoPedidoId) {
+      return;
+    }
 
-    if (!textoPedido) {
+    const texto = textoEdicionPedido.trim();
+
+    if (!texto) {
+      return;
+    }
+
+    try {
+      const pedidoActualizado = await actualizarPedido(
+        editandoPedidoId,
+        texto
+      );
+
+      setMisPedidos((actuales) =>
+        actuales.map((pedido) =>
+          pedido.id === editandoPedidoId
+            ? pedidoActualizado
+            : pedido
+        )
+      );
+
+      setEditandoPedidoId(null);
+      setTextoEdicionPedido("");
+
+      setModalConfirmarEdicion(false);
+    } catch (error) {
+      console.error("Error al actualizar pedido:", error);
+
+      mostrarMensaje?.(
+        "Error al actualizar pedido",
+        "No se pudo actualizar el pedido."
+      );
+    }
+  }
+
+  async function manejarCrearPedido() {
+    if (!pedidoAEnviar) {
       return;
     }
 
@@ -24,37 +80,51 @@ export default function MyOrder() {
       const usuario = await obtenerUsuarioPorAuthId(session.user.id);
 
       if (!usuario) {
-        throw new Error("No se encontró el usuario de la plataforma.");
+        throw new Error(
+          "No se encontró el usuario de la plataforma."
+        );
       }
 
       const publicacion = publicaciones.find(
-        (item) => item.id === publicacionId
+        (item) => item.id === pedidoAEnviar.publicacionId
       );
 
       if (!publicacion) {
         throw new Error("No se encontró la publicación.");
       }
 
-      await crearPedido({
+      const pedidoCreado = await crearPedido({
         usuarioId: usuario.id,
         rotiseriaId: publicacion.rotiseria_id,
-        pedido: textoPedido,
+        pedido: pedidoAEnviar.textoPedido,
       });
+
+      setMisPedidos((actuales) => [
+        ...actuales,
+        pedidoCreado,
+      ]);
 
       setPedidos((actuales) => ({
         ...actuales,
-        [publicacionId]: "",
+        [pedidoAEnviar.publicacionId]: "",
       }));
 
-      alert("Pedido enviado correctamente.");
+      setModalConfirmarPedido(false);
+      setPedidoAEnviar(null);
     } catch (error) {
       console.error("Error al crear pedido:", error);
-      alert("No se pudo enviar el pedido.");
+
+      setModalConfirmarPedido(false);
+      setPedidoAEnviar(null);
+
+      setModalMensaje(
+        "No se pudo enviar el pedido."
+      );
     }
   }
 
   useEffect(() => {
-    async function cargarPublicaciones() {
+    async function cargarDatos() {
       try {
         const data = await obtenerPublicaciones();
         setPublicaciones(data);
@@ -66,16 +136,95 @@ export default function MyOrder() {
         });
 
         setPedidos(pedidosIniciales);
+
+        const usuario = await obtenerUsuarioPorAuthId(
+          session.user.id
+        );
+
+        if (!usuario) {
+          throw new Error(
+            "No se encontró el usuario de la plataforma."
+          );
+        }
+
+        const pedidosUsuario =
+          await obtenerMisPedidosDelDia(usuario.id);
+
+        setMisPedidos(pedidosUsuario);
       } catch (error) {
-        console.error("Error al cargar publicaciones:", error);
-        setError("No se pudieron cargar las publicaciones.");
+        console.error("Error al cargar Mi pedido:", error);
+        setError("No se pudieron cargar los datos.");
       } finally {
         setLoading(false);
       }
     }
 
-    cargarPublicaciones();
+    cargarDatos();
   }, []);
+
+  async function confirmarEliminarPedido() {
+    if (!pedidoAEliminar) {
+      return;
+    }
+
+    try {
+      await eliminarPedido(pedidoAEliminar.id);
+
+      setMisPedidos((actuales) =>
+        actuales.filter(
+          (pedido) => pedido.id !== pedidoAEliminar.id
+        )
+      );
+
+      setModalEliminarPedido(false);
+      setPedidoAEliminar(null);
+    } catch (error) {
+      console.error("Error al eliminar pedido:", error);
+
+      setModalEliminarPedido(false);
+      setPedidoAEliminar(null);
+
+      setModalMensaje(
+        "No se pudo eliminar el pedido."
+      );
+    }
+  }
+
+  function solicitarEliminarPedido(pedido) {
+    setPedidoAEliminar(pedido);
+    setModalEliminarPedido(true);
+  }
+
+  function solicitarCrearPedido(publicacion) {
+    const textoPedido = pedidos[publicacion.id]?.trim();
+
+    if (!textoPedido) {
+      setModalMensaje("Escribí qué querés pedir antes de continuar.");
+      setModalConfirmarPedido(false);
+      return;
+    }
+
+    setPedidoAEnviar({
+      publicacionId: publicacion.id,
+      textoPedido,
+    });
+
+    setNombreRotiseriaPedido(
+      publicacion.rotiserias?.nombre || "esta rotisería"
+    );
+
+    setModalConfirmarPedido(true);
+  }
+
+  function comenzarEdicionPedido(pedido) {
+    setEditandoPedidoId(pedido.id);
+    setTextoEdicionPedido(pedido.pedido);
+  }
+
+  function cancelarEdicionPedido() {
+    setEditandoPedidoId(null);
+    setTextoEdicionPedido("");
+  }
 
   function manejarCambioPedido(publicacionId, valor) {
     setPedidos((actuales) => ({
@@ -97,6 +246,79 @@ export default function MyOrder() {
       <div className="page-header">
         <h1>Mi pedido</h1>
       </div>
+
+        {misPedidos.length > 0 && (
+          <div className="my-orders-today">
+            <h2>Mis pedidos de hoy</h2>
+
+            {misPedidos.map((pedido) => (
+              <div
+                className="my-order-existing"
+                key={pedido.id}
+              >
+                <div className="my-order-existing-header">
+                  <h3>
+                    🍽{" "}
+                    {pedido.rotiserias?.nombre || "Sin rotisería"}
+                  </h3>
+
+                  <div className="my-order-existing-actions">
+                    <button
+                      type="button"
+                      onClick={() => comenzarEdicionPedido(pedido)}
+                    >
+                      Editar
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => solicitarEliminarPedido(pedido)}
+                    >
+                      Eliminar
+                    </button>
+                  </div>
+                </div>
+
+                {editandoPedidoId === pedido.id ? (
+                  <div className="my-order-edit">
+                    <textarea
+                      value={textoEdicionPedido}
+                      onChange={(event) =>
+                        setTextoEdicionPedido(
+                          event.target.value
+                        )
+                      }
+                      rows="4"
+                    />
+
+                    <div className="my-order-edit-actions">
+                      <button
+                        type="button"
+                        onClick={cancelarEdicionPedido}
+                      >
+                        Cancelar
+                      </button>
+
+                      <button
+                        type="button"
+                        className="btn-primary"
+                        onClick={() =>
+                          setModalConfirmarEdicion(true)
+                        }
+                      >
+                        Guardar
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="my-order-existing-text">
+                    {pedido.pedido}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
 
       {publicaciones.length === 0 ? (
         <p>No hay publicaciones disponibles para hoy.</p>
@@ -178,7 +400,7 @@ export default function MyOrder() {
                 <button
                   type="button"
                   className="btn-primary"
-                  onClick={() => manejarCrearPedido(publicacion.id)}
+                  onClick={() => solicitarCrearPedido(publicacion)}
                 >
                   Pedir
                 </button>
@@ -187,6 +409,66 @@ export default function MyOrder() {
           ))}
         </div>
       )}
+      <ConfirmModal
+        abierto={modalConfirmarPedido}
+        titulo="Enviar pedido"
+        mensaje={`¿Estás seguro de que querés enviar este pedido a ${nombreRotiseriaPedido}?`}
+        textoConfirmar="Enviar pedido"
+        textoCancelar="Cancelar"
+        onConfirm={manejarCrearPedido}
+        onCancel={() => {
+          setModalConfirmarPedido(false);
+          setPedidoAEnviar(null);
+        }}
+      />
+
+      <ConfirmModal
+        abierto={modalPedidoExitoso}
+        titulo={
+          modalMensaje
+            ? "No se pudo enviar"
+            : "Pedido enviado"
+        }
+        mensaje={
+          modalMensaje ||
+          `Tu pedido a ${nombreRotiseriaPedido} fue enviado correctamente.`
+        }
+        textoConfirmar="Entendido"
+        textoCancelar=""
+        onConfirm={() => {
+          setModalPedidoExitoso(false);
+          setModalMensaje("");
+        }}
+        onCancel={() => {
+          setModalPedidoExitoso(false);
+          setModalMensaje("");
+        }}
+      />
+
+      <ConfirmModal
+        abierto={modalConfirmarEdicion}
+        titulo="Guardar cambios"
+        mensaje="¿Querés guardar los cambios realizados en este pedido?"
+        textoConfirmar="Guardar cambios"
+        textoCancelar="Cancelar"
+        onConfirm={confirmarEdicionPedido}
+        onCancel={() =>
+          setModalConfirmarEdicion(false)
+        }
+      />
+
+      <ConfirmModal
+        abierto={modalEliminarPedido}
+        titulo="Eliminar pedido"
+        mensaje="¿Estás seguro de que querés eliminar este pedido?"
+        textoConfirmar="Eliminar"
+        textoCancelar="Cancelar"
+        onConfirm={confirmarEliminarPedido}
+        onCancel={() => {
+          setModalEliminarPedido(false);
+          setPedidoAEliminar(null);
+        }}
+      />
     </div>
   );
 }

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import "./DailyOrders.css";
 
 import { obtenerPedidosDelDia } from "../../services/pedido.service";
+import { obtenerUsuarios } from "../../services/usuario.service";
 
 export default function DailyOrders() {
 
@@ -9,21 +10,46 @@ export default function DailyOrders() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [filtroRotiseria, setFiltroRotiseria] = useState("");
+  const [usuariosPendientes, setUsuariosPendientes] = useState([]);
 
   useEffect(() => {
-    async function cargarPedidos() {
+    async function cargarDatos() {
       try {
-        const data = await obtenerPedidosDelDia();
-        setPedidos(data);
+        const [pedidosData, usuariosData] = await Promise.all([
+          obtenerPedidosDelDia(),
+          obtenerUsuarios(),
+        ]);
+
+        setPedidos(pedidosData);
+
+        const empleadosActivos = usuariosData.filter(
+          (usuario) =>
+            usuario.activo &&
+            usuario.roles?.nombre === "Empleado"
+        );
+
+        const usuariosConPedido = new Set(
+          pedidosData.map((pedido) => pedido.usuario_id)
+        );
+
+        const pendientes = empleadosActivos.filter(
+          (empleado) => !usuariosConPedido.has(empleado.id)
+        );
+
+        setUsuariosPendientes(pendientes);
       } catch (error) {
-        console.error("Error al cargar pedidos:", error);
-        setError("No se pudieron cargar los pedidos.");
+        console.error(
+          "Error al cargar pedidos y usuarios:",
+          error
+        );
+
+        setError("No se pudieron cargar los datos.");
       } finally {
         setLoading(false);
       }
     }
 
-    cargarPedidos();
+    cargarDatos();
   }, []);
 
   if (loading) {
@@ -38,8 +64,21 @@ export default function DailyOrders() {
     filtroRotiseria === ""
       ? pedidos
       : pedidos.filter(
-          (pedido) => pedido.rotiserias?.nombre === filtroRotiseria
+          (pedido) => pedido.rotiseria_id === filtroRotiseria
         );
+    
+  const rotiseriasFiltradas = [
+    ...new Map(
+      pedidos.map((pedido) => [
+        pedido.rotiseria_id,
+        {
+          id: pedido.rotiseria_id,
+          nombre:
+            pedido.rotiserias?.nombre || "Sin rotisería",
+        },
+      ])
+    ).values(),
+  ];
 
   return (
     <div className="daily-orders">
@@ -54,7 +93,6 @@ export default function DailyOrders() {
       </div>
 
       <div className="summary">
-
         <div className="summary-card">
           <span>Pedidos</span>
           <h2>{pedidos.length}</h2>
@@ -62,30 +100,32 @@ export default function DailyOrders() {
 
         <div className="summary-card">
           <span>Pendientes</span>
-          <h2>0</h2>
+          <h2>{usuariosPendientes.length}</h2>
         </div>
 
         <div className="summary-card">
           <span>Rotiserías</span>
           <h2>
-            {new Set(pedidos.map((pedido) => pedido.rotiseria_id)).size}
+            {new Set(
+              pedidos.map((pedido) => pedido.rotiseria_id)
+            ).size}
           </h2>
         </div>
-
       </div>
 
-      <div className="pending-card">
-        <h2>Usuarios pendientes</h2>
+      {usuariosPendientes.length > 0 && (
+        <div className="pending-card">
+          <h2>Usuarios pendientes</h2>
 
-        <ul>
-          <li>Juan Pérez</li>
-          <li>María Gómez</li>
-          <li>Pedro Ruiz</li>
-          <li>Carlos Fernández</li>
-          <li>Lucía Gómez</li>
-          <li>Ana López</li>
-        </ul>
-      </div>
+          <ul>
+            {usuariosPendientes.map((usuario) => (
+              <li key={usuario.id}>
+                {usuario.nombre} {usuario.apellido}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       <div className="tabs">
         <button
@@ -95,19 +135,21 @@ export default function DailyOrders() {
           Todas
         </button>
 
-        {["Brisari", "Ensaladas", "Mary", "Saona"].map(
-          (rotiseria) => (
-            <button
-              key={rotiseria}
-              className={
-                filtroRotiseria === rotiseria ? "active" : ""
-              }
-              onClick={() => setFiltroRotiseria(rotiseria)}
-            >
-              {rotiseria}
-            </button>
-          )
-        )}
+        {rotiseriasFiltradas.map((rotiseria) => (
+          <button
+            key={rotiseria.id}
+            className={
+              filtroRotiseria === rotiseria.id
+                ? "active"
+                : ""
+            }
+            onClick={() =>
+              setFiltroRotiseria(rotiseria.id)
+            }
+          >
+            {rotiseria.nombre}
+          </button>
+        ))}
       </div>
 
       <table>

@@ -26,9 +26,7 @@ export default function Sidebar() {
 
         <div>
           <h2>Pedidos</h2>
-          <span>
-            {esEmpleado ? "Empleado" : "Operador"}
-          </span>
+          <span>{rol}</span>
         </div>
       </div>
 
@@ -36,7 +34,7 @@ export default function Sidebar() {
 
         {esOperador && (
           <>
-            <NavLink to="/" end>
+            <NavLink to="/dashboard">
               <LayoutDashboard size={20} />
               Dashboard
             </NavLink>
