@@ -121,3 +121,38 @@ tbody tr {
 tbody tr:hover {
     background: #f8f9fa;
 }
+
+.orders-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.order-group {
+  background: white;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.order-group h2 {
+  margin: 0;
+  padding: 18px 20px;
+  font-size: 18px;
+}
+
+.order-group table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.order-group th,
+.order-group td {
+  padding: 14px 20px;
+  text-align: left;
+  border-top: 1px solid #eee;
+}
+
+.order-group th {
+  font-weight: 600;
+}

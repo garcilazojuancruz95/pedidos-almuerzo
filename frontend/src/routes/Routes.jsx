@@ -48,7 +48,7 @@ export default function AppRoutes() {
           }
         />
 
-        {/* Operador / Administrador */}
+        {/* Operador */}
         <Route
           element={
             <ProtectedRoute roles={["Operador", "Administrador"]}>

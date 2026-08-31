@@ -80,6 +80,13 @@ export default function DailyOrders() {
     ).values(),
   ];
 
+  const pedidosAgrupados = rotiseriasFiltradas.map((rotiseria) => ({
+    ...rotiseria,
+    pedidos: pedidosFiltrados.filter(
+      (pedido) => pedido.rotiseria_id === rotiseria.id
+    ),
+  }));
+
   return (
     <div className="daily-orders">
 
@@ -152,42 +159,42 @@ export default function DailyOrders() {
         ))}
       </div>
 
-      <table>
+      <div className="orders-groups">
+        {pedidosAgrupados.map((rotiseria) => (
+          <div className="order-group" key={rotiseria.id}>
+            <h2>{rotiseria.nombre}</h2>
 
-        <thead>
-          <tr>
-            <th>Empresa</th>
-            <th>Usuario</th>
-            <th>Rotisería</th>
-            <th>Pedido</th>
-          </tr>
-        </thead>
+            <table>
+              <thead>
+                <tr>
+                  <th>Empresa</th>
+                  <th>Usuario</th>
+                  <th>Pedido</th>
+                </tr>
+              </thead>
 
-        <tbody>
-          {pedidosFiltrados.map((pedido) => (
-            <tr key={pedido.id}>
-              <td>
-                {pedido.usuarios?.empresas?.nombre || "Sin empresa"}
-              </td>
+              <tbody>
+                {rotiseria.pedidos.map((pedido) => (
+                  <tr key={pedido.id}>
+                    <td>
+                      {pedido.usuarios?.empresas?.nombre ||
+                        "Sin empresa"}
+                    </td>
 
-              <td>
-                {pedido.usuarios
-                  ? `${pedido.usuarios.nombre} ${pedido.usuarios.apellido}`
-                  : "Sin usuario"}
-              </td>
+                    <td>
+                      {pedido.usuarios
+                        ? `${pedido.usuarios.nombre} ${pedido.usuarios.apellido}`
+                        : "Sin usuario"}
+                    </td>
 
-              <td>
-                {pedido.rotiserias?.nombre || "Sin rotisería"}
-              </td>
-
-              <td>
-                {pedido.pedido}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-
-      </table>
+                    <td>{pedido.pedido}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ))}
+      </div>
 
     </div>
   );

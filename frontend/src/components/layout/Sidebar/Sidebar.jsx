@@ -63,11 +63,6 @@ export default function Sidebar() {
           </NavLink>
         )}
 
-        <NavLink to="/profile">
-          <User size={20} />
-          Perfil
-        </NavLink>
-
       </nav>
     </div>
   );
