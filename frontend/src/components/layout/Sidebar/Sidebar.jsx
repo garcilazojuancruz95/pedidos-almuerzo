@@ -21,14 +21,6 @@ export default function Sidebar() {
 
   return (
     <div className="sidebar">
-      <div className="sidebar-logo">
-        🍽
-
-        <div>
-          <h2>Pedidos</h2>
-          <span>{rol}</span>
-        </div>
-      </div>
 
       <nav className="sidebar-menu">
 

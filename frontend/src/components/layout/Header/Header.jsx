@@ -18,8 +18,14 @@ export default function Header() {
 
   return (
     <header className="header">
-      <div>
-        <h2>🍽 Plataforma de Pedidos de Almuerzo</h2>
+      <div className="header-brand">
+        <img
+          src="/images/logo-nasini.svg"
+          alt="Nasini"
+          className="header-logo"
+        />
+
+        <h2>Plataforma de Pedidos de Almuerzo</h2>
       </div>
 
       <div className="header-user">

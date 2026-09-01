@@ -12,23 +12,28 @@ export default function OperatorLayout() {
         height: "100vh",
       }}
     >
+      <div
+        style={{
+          gridColumn: "1 / 3",
+        }}
+      >
+        <Header />
+      </div>
+
       <aside
         style={{
-          gridRow: "1 / 3",
           background: "var(--color-primary)",
           color: "white",
-          padding: "20px",
         }}
       >
         <Sidebar />
       </aside>
 
-      <Header />
-
       <main
         style={{
           padding: "24px",
           background: "var(--color-background)",
+          overflow: "auto",
         }}
       >
         <Outlet />

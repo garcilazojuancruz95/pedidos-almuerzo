@@ -1,14 +1,21 @@
 import { useEffect, useState } from "react";
 
-import { obtenerPublicaciones } from "../../services/publicacion.service";
+import {
+  obtenerPublicaciones,
+  obtenerRotiserias,
+} from "../../services/publicacion.service";
 import { obtenerPedidosDelDia } from "../../services/pedido.service";
 import { obtenerUsuarios } from "../../services/usuario.service";
 
+import { useAuth } from "../../contexts/AuthContext";
+
 export default function Dashboard() {
+  const { usuario } = useAuth();
+
   const [publicaciones, setPublicaciones] = useState([]);
   const [pedidos, setPedidos] = useState([]);
   const [usuariosPendientes, setUsuariosPendientes] = useState([]);
-
+  const [rotiserias, setRotiserias] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -19,14 +26,17 @@ export default function Dashboard() {
           publicacionesData,
           pedidosData,
           usuariosData,
+          rotiseriasData,
         ] = await Promise.all([
           obtenerPublicaciones(),
           obtenerPedidosDelDia(),
           obtenerUsuarios(),
+          obtenerRotiserias(),
         ]);
 
         setPublicaciones(publicacionesData);
         setPedidos(pedidosData);
+        setRotiserias(rotiseriasData);
 
         const empleadosActivos = usuariosData.filter(
           (usuario) =>
@@ -76,7 +86,7 @@ export default function Dashboard() {
           color: "#666",
         }}
       >
-        Bienvenido, Operador.
+        Bienvenido, {usuario?.nombre || "usuario"}.
       </p>
 
       <div
@@ -123,6 +133,19 @@ export default function Dashboard() {
         >
           <h3>Pendientes</h3>
           <h1>{usuariosPendientes.length}</h1>
+        </div>
+
+        <div
+          style={{
+            background: "white",
+            padding: "20px",
+            borderRadius: "12px",
+            width: "220px",
+            boxShadow: "var(--shadow)",
+          }}
+        >
+          <h3>Rotiserías</h3>
+          <h1>{rotiserias.length}</h1>
         </div>
       </div>
     </div>

@@ -156,3 +156,75 @@ tbody tr:hover {
 .order-group th {
   font-weight: 600;
 }
+
+.order-form-card {
+    background: white;
+    padding: 28px;
+    margin-bottom: 24px;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+}
+
+.order-form-card h2 {
+    margin: 0 0 24px 0;
+    font-size: 20px;
+}
+
+.order-form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+    max-width: 600px;
+}
+
+.order-form-field label {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.order-form-field select,
+.order-form-field textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 11px 12px;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 14px;
+    background: white;
+}
+
+.order-form-field select {
+    cursor: pointer;
+}
+
+.order-form-field textarea {
+    resize: vertical;
+    min-height: 110px;
+}
+
+.order-form-field select:focus,
+.order-form-field textarea:focus {
+    outline: none;
+    border-color: var(--color-primary);
+}
+
+.order-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.btn-secondary {
+    padding: 10px 18px;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    background: white;
+    cursor: pointer;
+}
+
+.btn-secondary:hover {
+    background: #f5f5f5;
+}

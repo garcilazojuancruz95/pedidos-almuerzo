@@ -6,14 +6,14 @@
     flex-direction: column;
 }
 
-.sidebar-logo{
-    display:flex;
-    align-items:center;
-    gap:14px;
+.sidebar-logo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
 
-    padding:24px;
-
-    border-bottom:1px solid rgba(255,255,255,.15);
+    padding: 0px 10px 24px 30px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 .sidebar-logo h2{
@@ -54,4 +54,15 @@
     color:var(--color-primary);
 
     font-weight:600;
+}
+
+.sidebar-logo-image {
+    width: 150px;
+    height: auto;
+    display: block;
+}
+
+.sidebar-user-info {
+    text-align: center;
+    font-size: 2px;
 }
