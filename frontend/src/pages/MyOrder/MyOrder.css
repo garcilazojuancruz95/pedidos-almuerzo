@@ -42,11 +42,18 @@
 }
 
 .my-order-images img {
-  width: 220px;
+  width: 360px;
   max-width: 100%;
   height: auto;
   border-radius: 8px;
-  object-fit: cover;
+  object-fit: contain;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.my-order-images img:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
 }
 
 .my-order-menu {
@@ -169,4 +176,97 @@
 .my-order-existing-actions {
   display: flex;
   gap: 10px;
+}
+
+.home-office-message {
+  margin: 4px 0;
+  color: #666;
+  font-size: 14px;
+}
+
+.my-order-form button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.my-order-images img {
+  width: 360px;
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  object-fit: contain;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.my-order-images img:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+}
+
+
+/* Visor de imagen ampliada */
+
+.image-viewer {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 30px;
+  box-sizing: border-box;
+
+  background: rgba(0, 0, 0, 0.85);
+
+  cursor: zoom-out;
+}
+
+.image-viewer-image {
+  max-width: 95vw;
+  max-height: 95vh;
+  width: auto;
+  height: auto;
+
+  object-fit: contain;
+  border-radius: 8px;
+
+  cursor: default;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+}
+
+.image-viewer-close {
+  position: fixed;
+  top: 20px;
+  right: 25px;
+
+  width: 44px;
+  height: 44px;
+  box-sizing: border-box;
+
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+
+  background: rgba(255, 255, 255, 0.9);
+  color: #333;
+
+  font-family: Arial, sans-serif;
+  font-size: 32px;
+  line-height: 44px;
+  text-align: center;
+
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  z-index: 10000;
+}
+
+.image-viewer-close:hover {
+  background: #ffffff;
 }

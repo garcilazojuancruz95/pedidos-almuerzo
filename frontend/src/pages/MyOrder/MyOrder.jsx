@@ -4,6 +4,9 @@ import "./MyOrder.css";
 import { obtenerPublicaciones } from "../../services/publicacion.service";
 import { useAuth } from "../../contexts/AuthContext";
 import { obtenerUsuarioPorAuthId } from "../../services/usuario.service";
+import {
+  estaEnHomeOffice,
+} from "../../services/home-office.service";
 import { 
   crearPedido,
   obtenerMisPedidosDelDia,
@@ -27,6 +30,8 @@ export default function MyOrder() {
   const [editandoPedidoId, setEditandoPedidoId] = useState(null);
   const [textoEdicionPedido, setTextoEdicionPedido] = useState("");
   const [pedidoAEliminar, setPedidoAEliminar] = useState(null);
+  const [enHomeOffice, setEnHomeOffice] = useState(false);
+  const [imagenAmpliada, setImagenAmpliada] = useState(null);
   const [modalConfirmarEdicion, setModalConfirmarEdicion] =
     useState(false);
   const [modalEliminarPedido, setModalEliminarPedido] =
@@ -76,6 +81,12 @@ export default function MyOrder() {
       return;
     }
 
+    if (enHomeOffice) {
+      setModalConfirmarPedido(false);
+      setPedidoAEnviar(null);
+      return;
+    }
+
     try {
       const usuario = await obtenerUsuarioPorAuthId(session.user.id);
 
@@ -84,6 +95,10 @@ export default function MyOrder() {
           "No se encontró el usuario de la plataforma."
         );
       }
+
+      const homeOffice = await estaEnHomeOffice(usuario.id);
+
+        setEnHomeOffice(homeOffice);
 
       const publicacion = publicaciones.find(
         (item) => item.id === pedidoAEnviar.publicacionId
@@ -147,10 +162,15 @@ export default function MyOrder() {
           );
         }
 
+        const homeOffice = await estaEnHomeOffice(usuario.id);
+
+        setEnHomeOffice(homeOffice);
+
         const pedidosUsuario =
           await obtenerMisPedidosDelDia(usuario.id);
 
         setMisPedidos(pedidosUsuario);
+
       } catch (error) {
         console.error("Error al cargar Mi pedido:", error);
         setError("No se pudieron cargar los datos.");
@@ -160,6 +180,24 @@ export default function MyOrder() {
     }
 
     cargarDatos();
+  }, []);
+
+  useEffect(() => {
+    function manejarCambioHomeOffice(event) {
+      setEnHomeOffice(event.detail);
+    }
+
+    window.addEventListener(
+      "homeOfficeChanged",
+      manejarCambioHomeOffice
+    );
+
+    return () => {
+      window.removeEventListener(
+        "homeOfficeChanged",
+        manejarCambioHomeOffice
+      );
+    };
   }, []);
 
   async function confirmarEliminarPedido() {
@@ -360,6 +398,7 @@ export default function MyOrder() {
                           publicacion.rotiserias?.nombre ||
                           "rotisería"
                         }`}
+                        onClick={() => setImagenAmpliada(imagen.url)}
                       />
                     ))}
                 </div>
@@ -397,9 +436,16 @@ export default function MyOrder() {
                   placeholder="Escribí tu pedido..."
                 />
 
+                {enHomeOffice && (
+                  <p className="home-office-message">
+                    Estás marcado como Home Office. Desmarcá "Estoy en casa" para realizar un pedido.
+                  </p>
+                )}
+
                 <button
                   type="button"
                   className="btn-primary"
+                  disabled={enHomeOffice}
                   onClick={() => solicitarCrearPedido(publicacion)}
                 >
                   Pedir
@@ -407,6 +453,29 @@ export default function MyOrder() {
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {imagenAmpliada && (
+        <div
+          className="image-viewer"
+          onClick={() => setImagenAmpliada(null)}
+        >
+          <button
+            type="button"
+            className="image-viewer-close"
+            onClick={() => setImagenAmpliada(null)}
+            aria-label="Cerrar imagen"
+          >
+            ×
+          </button>
+
+          <img
+            src={imagenAmpliada}
+            alt="Menú ampliado"
+            className="image-viewer-image"
+            onClick={(event) => event.stopPropagation()}
+          />
         </div>
       )}
       <ConfirmModal

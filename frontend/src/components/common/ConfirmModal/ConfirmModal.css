@@ -19,8 +19,12 @@
 }
 
 .confirm-modal h2 {
+  position: static !important;
+  left: auto !important;
   margin: 0 0 12px;
   font-size: 20px;
+  font-weight: 600;
+  color: #222;
 }
 
 .confirm-modal p {
