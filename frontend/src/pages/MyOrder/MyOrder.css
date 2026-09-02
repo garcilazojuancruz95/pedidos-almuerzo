@@ -2,6 +2,11 @@
   max-width: 1200px;
 }
 
+.my-order .page-header {
+  font-size: 25px;
+  font-weight: 600;
+}
+
 .my-order-publications {
   display: flex;
   flex-direction: column;
@@ -113,6 +118,8 @@
 
 .my-orders-today h2 {
   margin-bottom: 16px;
+  font-size: 25px;
+  color: #333;
 }
 
 .my-order-existing {

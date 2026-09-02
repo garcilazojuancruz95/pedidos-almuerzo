@@ -44,7 +44,8 @@
 
 .summary-card span {
     color: #777;
-    font-size: 14px;
+    font-size: 25px;
+    font-weight: 600;
 }
 
 .summary-card h2 {
@@ -103,6 +104,7 @@
     display: flex;
     gap: 10px;
     margin-bottom: 25px;
+    font-weight: 600;
 }
 
 .tabs button {
@@ -340,6 +342,11 @@ tbody tr:hover {
     margin: 6px 0;
 }
 
+.daily-orders .page-header  h1{
+    font-size: 25px;
+    font-weight: 600;
+}
+
 .form-error {
     margin: 6px 0 0;
     color: #c62828;
@@ -377,4 +384,37 @@ tbody tr:hover {
     margin: 0;
     padding-left: 20px;
     line-height: 2;
+}
+
+.pending-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.pending-header .pending-toggle {
+  flex: 1;
+}
+
+.refresh-button {
+  width: 42px;
+  height: 42px;
+  border: none;
+  border-radius: 8px;
+  background: #e9ecef;
+  color: #555;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  transition: .2s;
+}
+
+.refresh-button:hover:not(:disabled) {
+  background: #dcdfe3;
+}
+
+.refresh-button:disabled {
+  opacity: 0.6;
+  cursor: default;
 }

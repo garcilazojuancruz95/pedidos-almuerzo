@@ -13,7 +13,7 @@ function obtenerFechaLocal() {
 export async function marcarHomeOffice(usuarioId) {
   const hoy = obtenerFechaLocal();
 
-  const { data, error } = await supabase
+  const { error } = await supabase
     .from("home_office")
     .upsert(
       {
@@ -22,16 +22,13 @@ export async function marcarHomeOffice(usuarioId) {
       },
       {
         onConflict: "usuario_id,fecha",
+        ignoreDuplicates: true,
       }
-    )
-    .select()
-    .single();
+    );
 
   if (error) {
     throw error;
   }
-
-  return data;
 }
 
 export async function quitarHomeOffice(usuarioId) {

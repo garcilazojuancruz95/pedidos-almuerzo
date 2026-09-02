@@ -47,6 +47,7 @@ export default function DailyOrders() {
   const [textoPedido, setTextoPedido] = useState("");
   const [pestanaPendientes, setPestanaPendientes] = useState("pendientes");
   const [pendientesExpandido, setPendientesExpandido] = useState(false);
+  const [refrescando, setRefrescando] = useState(false);
 
   function solicitarCargaPedido() {
     const nuevosErrores = {
@@ -202,86 +203,90 @@ export default function DailyOrders() {
     }
   }
 
-  useEffect(() => {
-    async function cargarDatos() {
-      try {
-        const [
-          pedidosData,
-          usuariosData,
-          publicacionesData,
-          homeOfficeData,
-        ] = await Promise.all([
-          obtenerPedidosDelDia(),
-          obtenerUsuarios(),
-          obtenerPublicaciones(),
-          obtenerHomeOfficeDelDia(),
-        ]);
+  async function cargarDatos() {
+    try {
+      setRefrescando(true);
+      setError("");
 
-        setPedidos(pedidosData);
-        setUsuarios(usuariosData);
-        setPublicaciones(publicacionesData);
+      const [
+        pedidosData,
+        usuariosData,
+        publicacionesData,
+        homeOfficeData,
+      ] = await Promise.all([
+        obtenerPedidosDelDia(),
+        obtenerUsuarios(),
+        obtenerPublicaciones(),
+        obtenerHomeOfficeDelDia(),
+      ]);
 
-        const empleadosEnCasa = homeOfficeData
-          .map((registro) => registro.usuarios)
-          .filter(
-            (usuario) =>
-              usuario &&
-              usuario.activo &&
-              usuario.roles?.nombre === "Empleado"
-          )
-          .sort((a, b) => {
-            const nombreA = `${a.nombre || ""} ${a.apellido || ""}`;
-            const nombreB = `${b.nombre || ""} ${b.apellido || ""}`;
+      setPedidos(pedidosData);
+      setUsuarios(usuariosData);
+      setPublicaciones(publicacionesData);
 
-            return nombreA.localeCompare(nombreB, "es", {
-              sensitivity: "base",
-            });
-          });
-
-        setUsuariosEnCasa(empleadosEnCasa);
-
-        const empleadosActivos = usuariosData.filter(
+      const empleadosEnCasa = homeOfficeData
+        .map((registro) => registro.usuarios)
+        .filter(
           (usuario) =>
+            usuario &&
             usuario.activo &&
             usuario.roles?.nombre === "Empleado"
-        );
+        )
+        .sort((a, b) => {
+          const nombreA = `${a.nombre || ""} ${a.apellido || ""}`;
+          const nombreB = `${b.nombre || ""} ${b.apellido || ""}`;
 
-        const usuariosConPedido = new Set(
-          pedidosData.map((pedido) => pedido.usuario_id)
-        );
-
-        const usuariosIdsEnCasa = new Set(
-          empleadosEnCasa.map((empleado) => empleado.id)
-        );
-
-        const pendientes = empleadosActivos
-          .filter(
-            (empleado) =>
-              !usuariosConPedido.has(empleado.id) &&
-              !usuariosIdsEnCasa.has(empleado.id)
-          )
-          .sort((a, b) => {
-            const nombreA = `${a.nombre || ""} ${a.apellido || ""}`;
-            const nombreB = `${b.nombre || ""} ${b.apellido || ""}`;
-
-            return nombreA.localeCompare(nombreB, "es", {
-              sensitivity: "base",
-            });
+          return nombreA.localeCompare(nombreB, "es", {
+            sensitivity: "base",
           });
+        });
 
-        setUsuariosPendientes(pendientes);
-      } catch (error) {
-        console.error(
-          "Error al cargar pedidos y usuarios:",
-          error
-        );
+      setUsuariosEnCasa(empleadosEnCasa);
 
-        setError("No se pudieron cargar los datos.");
-      } finally {
-        setLoading(false);
-      }
+      const empleadosActivos = usuariosData.filter(
+        (usuario) =>
+          usuario.activo &&
+          usuario.roles?.nombre === "Empleado"
+      );
+
+      const usuariosConPedido = new Set(
+        pedidosData.map((pedido) => pedido.usuario_id)
+      );
+
+      const usuariosIdsEnCasa = new Set(
+        empleadosEnCasa.map((empleado) => empleado.id)
+      );
+
+      const pendientes = empleadosActivos
+        .filter(
+          (empleado) =>
+            !usuariosConPedido.has(empleado.id) &&
+            !usuariosIdsEnCasa.has(empleado.id)
+        )
+        .sort((a, b) => {
+          const nombreA = `${a.nombre || ""} ${a.apellido || ""}`;
+          const nombreB = `${b.nombre || ""} ${b.apellido || ""}`;
+
+          return nombreA.localeCompare(nombreB, "es", {
+            sensitivity: "base",
+          });
+        });
+
+      setUsuariosPendientes(pendientes);
+    } catch (error) {
+      console.error(
+        "Error al cargar pedidos y usuarios:",
+        error
+      );
+
+      setError("No se pudieron cargar los datos.");
+    } finally {
+      setLoading(false);
+      setRefrescando(false);
     }
+  }
 
+  useEffect(() => {
     cargarDatos();
   }, []);
 
@@ -441,7 +446,6 @@ export default function DailyOrders() {
 
   return (
     <div className="daily-orders">
-
       <div className="page-header">
         <h1>Pedidos del día</h1>
 
@@ -635,18 +639,32 @@ export default function DailyOrders() {
 
         {pestanaPendientes === "pendientes" && (
           <div>
-            <button
-              type="button"
-              className="pending-toggle"
-              onClick={() =>
-                setPendientesExpandido(!pendientesExpandido)
-              }
-            >
-              <span>Usuarios pendientes</span>
-              <span className="pending-toggle-icon">
-                {pendientesExpandido ? "▲" : "▼"}
-              </span>
-            </button>
+            <div className="pending-header">
+              <button
+                type="button"
+                className="pending-toggle"
+                onClick={() =>
+                  setPendientesExpandido(!pendientesExpandido)
+                }
+              >
+                <span>Usuarios pendientes</span>
+
+                <span className="pending-toggle-icon">
+                  {pendientesExpandido ? "▲" : "▼"}
+                </span>
+              </button>
+
+              <button
+                type="button"
+                className="refresh-button"
+                onClick={cargarDatos}
+                disabled={refrescando}
+                title="Refrescar"
+                aria-label="Refrescar datos"
+              >
+                {refrescando ? "↻" : "↻"}
+              </button>
+            </div>
 
             {pendientesExpandido && (
               <>

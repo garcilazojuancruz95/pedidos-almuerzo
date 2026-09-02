@@ -42,6 +42,25 @@ export default function Header() {
     cargarEstadoHomeOffice();
   }, [usuario]);
 
+  useEffect(() => {
+    if (!usuario?.id) {
+      return;
+    }
+
+    let fechaAnterior = new Date().toLocaleDateString();
+
+    const intervalo = setInterval(() => {
+      const fechaActual = new Date().toLocaleDateString();
+
+      if (fechaActual !== fechaAnterior) {
+        fechaAnterior = fechaActual;
+        cargarEstadoHomeOffice();
+      }
+    }, 30000);
+
+    return () => clearInterval(intervalo);
+  }, [usuario]);
+
   async function manejarHomeOffice() {
     if (!usuario?.id) {
       return;
