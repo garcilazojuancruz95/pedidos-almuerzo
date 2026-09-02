@@ -8,8 +8,11 @@ import {
 
 import {
   obtenerUsuarioPorAuthId,
+  obtenerUsuarioPorEmail,
   usuarioPuedeIngresar,
 } from "../services/usuario.service";
+
+import { supabase } from "../lib/supabase";
 
 const AuthContext = createContext();
 
@@ -26,7 +29,34 @@ export function AuthProvider({ children }) {
       return;
     }
 
-    const usuario = await obtenerUsuarioPorAuthId(session.user.id);
+    let usuario = await obtenerUsuarioPorAuthId(session.user.id);
+
+    if (!usuario) {
+      usuario = await obtenerUsuarioPorEmail(
+        session.user.email
+      );
+
+      if (usuario) {
+        const { data, error } = await supabase
+          .from("usuarios")
+          .update({
+            auth_user_id: session.user.id,
+          })
+          .eq("id", usuario.id)
+          .select(`
+            *,
+            roles(*),
+            empresas(*)
+          `)
+          .single();
+
+        if (error) {
+          throw error;
+        }
+
+        usuario = data;
+      }
+    }
 
     const resultado = usuarioPuedeIngresar(usuario);
 

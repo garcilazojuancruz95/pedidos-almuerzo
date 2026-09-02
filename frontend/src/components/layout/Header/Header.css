@@ -70,31 +70,26 @@
 
 .home-office-switch {
     position: relative;
-
-    width: 230px;
+    width: 205px;
     height: 48px;
 
-    padding: 3px !important;
+    padding: 3px;
+    box-sizing: border-box;
 
     border: 1px solid var(--color-primary) !important;
     border-radius: 26px;
 
-    background: white !important;
+    background: #f1f5f3 !important;
     color: var(--color-primary) !important;
 
     cursor: pointer;
-
     font-family: inherit;
-    font-size: 14px;
-    font-weight: 500;
 
     overflow: hidden;
 
-    box-sizing: border-box;
-
     transition:
-        background-color 0.3s ease,
-        border-color 0.3s ease;
+        background 0.25s ease,
+        border-color 0.25s ease;
 }
 
 
@@ -103,11 +98,11 @@
 .home-office-track {
     position: relative;
 
-    width: 100%;
-    height: 100%;
-
     display: flex;
     align-items: center;
+
+    width: 100%;
+    height: 100%;
 }
 
 
@@ -130,7 +125,6 @@
 
     background: white;
 
-    border: 1px solid #d9dfdc;
     border-radius: 50%;
 
     box-shadow:
@@ -138,10 +132,8 @@
 
     z-index: 2;
 
-    box-sizing: border-box;
-
     transition:
-        transform 0.3s ease;
+        left 0.3s ease;
 }
 
 
@@ -197,9 +189,8 @@
 
 
 /* Mover círculo hacia la derecha */
-
 .home-office-switch.activo .home-office-knob {
-    transform: translateX(182px);
+    left: calc(100% - 40px);
 }
 
 
@@ -236,7 +227,7 @@
    RESPONSIVE
 ======================================== */
 
-@media (max-width: 700px) {
+@media (max-width: 900px) {
 
     .header {
         padding: 0 14px;
@@ -255,18 +246,26 @@
     }
 
     .home-office-switch {
-        width: 210px;
-    }
-
-    .home-office-switch.activo .home-office-knob {
-        transform: translateX(162px);
+        width: 190px;
     }
 }
 
-@media (max-width: 500px) {
+@media (max-width: 600px) {
+
+    .header {
+        padding: 0 10px;
+    }
+
+    .header-logo {
+        width: 110px;
+    }
+
+    .header-user {
+        gap: 8px;
+    }
 
     .home-office-switch {
-        width: 190px;
+        width: 175px;
         height: 44px;
     }
 
@@ -276,7 +275,7 @@
     }
 
     .home-office-switch.activo .home-office-knob {
-        transform: translateX(150px);
+        left: calc(100% - 36px);
     }
 
     .home-office-label {

@@ -481,8 +481,8 @@ export default function MyOrder() {
       <ConfirmModal
         abierto={modalConfirmarPedido}
         titulo="Enviar pedido"
-        mensaje={`¿Estás seguro de que querés enviar este pedido a ${nombreRotiseriaPedido}?`}
-        textoConfirmar="Enviar pedido"
+        mensaje="¿Confirmar pedido?"
+        textoConfirmar="Aceptar"
         textoCancelar="Cancelar"
         onConfirm={manejarCrearPedido}
         onCancel={() => {

@@ -11,11 +11,19 @@ function obtenerFechaLocal() {
 }
 
 export async function marcarHomeOffice(usuarioId) {
+  const hoy = obtenerFechaLocal();
+
   const { data, error } = await supabase
     .from("home_office")
-    .insert({
-      usuario_id: usuarioId,
-    })
+    .upsert(
+      {
+        usuario_id: usuarioId,
+        fecha: hoy,
+      },
+      {
+        onConflict: "usuario_id,fecha",
+      }
+    )
     .select()
     .single();
 

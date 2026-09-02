@@ -46,6 +46,7 @@ export default function DailyOrders() {
     useState("");
   const [textoPedido, setTextoPedido] = useState("");
   const [pestanaPendientes, setPestanaPendientes] = useState("pendientes");
+  const [pendientesExpandido, setPendientesExpandido] = useState(false);
 
   function solicitarCargaPedido() {
     const nuevosErrores = {
@@ -634,18 +635,33 @@ export default function DailyOrders() {
 
         {pestanaPendientes === "pendientes" && (
           <div>
-            <h2>Usuarios pendientes</h2>
+            <button
+              type="button"
+              className="pending-toggle"
+              onClick={() =>
+                setPendientesExpandido(!pendientesExpandido)
+              }
+            >
+              <span>Usuarios pendientes</span>
+              <span className="pending-toggle-icon">
+                {pendientesExpandido ? "▲" : "▼"}
+              </span>
+            </button>
 
-            {usuariosPendientes.length === 0 ? (
-              <p>No hay usuarios pendientes.</p>
-            ) : (
-              <ul className="pending-list">
-                {usuariosPendientes.map((usuario) => (
-                  <li key={usuario.id}>
-                    {usuario.nombre} {usuario.apellido}
-                  </li>
-                ))}
-              </ul>
+            {pendientesExpandido && (
+              <>
+                {usuariosPendientes.length === 0 ? (
+                  <p>No hay usuarios pendientes.</p>
+                ) : (
+                  <ul className="pending-list">
+                    {usuariosPendientes.map((usuario) => (
+                      <li key={usuario.id}>
+                        {usuario.nombre} {usuario.apellido}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </>
             )}
           </div>
         )}

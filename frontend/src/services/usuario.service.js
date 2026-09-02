@@ -18,6 +18,24 @@ export async function obtenerUsuarioPorAuthId(authUserId) {
   return data;
 }
 
+export async function obtenerUsuarioPorEmail(email) {
+  const { data, error } = await supabase
+    .from("usuarios")
+    .select(`
+      *,
+      roles(*),
+      empresas(*)
+    `)
+    .ilike("email", email)
+    .maybeSingle();
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+}
+
 export async function obtenerUsuarios() {
   const { data, error } = await supabase
     .from("usuarios")
