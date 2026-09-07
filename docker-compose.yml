@@ -1,0 +1,13 @@
+name: pedidos-almuerzo
+
+include:
+  - path: ./supabase-docker/docker-compose.yml
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+    container_name: pedidos-almuerzo-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:80"

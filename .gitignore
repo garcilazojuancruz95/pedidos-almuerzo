@@ -3,3 +3,14 @@ nomina_empleados.xlsx
 
 # Credenciales de Google
 docs/*client_secret*.json
+
+# Datos de la base de datos
+backups/
+
+# Variables de entorno y secretos
+.env
+.env.*
+!.env.example
+
+# Archivos temporales de Supabase
+supabase/.temp/

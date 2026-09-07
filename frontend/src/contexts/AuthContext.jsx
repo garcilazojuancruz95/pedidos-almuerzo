@@ -8,7 +8,6 @@ import {
 
 import {
   obtenerUsuarioPorAuthId,
-  obtenerUsuarioPorEmail,
   usuarioPuedeIngresar,
 } from "../services/usuario.service";
 
@@ -32,30 +31,15 @@ export function AuthProvider({ children }) {
     let usuario = await obtenerUsuarioPorAuthId(session.user.id);
 
     if (!usuario) {
-      usuario = await obtenerUsuarioPorEmail(
-        session.user.email
+      const { error } = await supabase.rpc(
+        "vincular_usuario_actual"
       );
 
-      if (usuario) {
-        const { data, error } = await supabase
-          .from("usuarios")
-          .update({
-            auth_user_id: session.user.id,
-          })
-          .eq("id", usuario.id)
-          .select(`
-            *,
-            roles(*),
-            empresas(*)
-          `)
-          .single();
-
-        if (error) {
-          throw error;
-        }
-
-        usuario = data;
+      if (error) {
+        throw error;
       }
+
+      usuario = await obtenerUsuarioPorAuthId(session.user.id);
     }
 
     const resultado = usuarioPuedeIngresar(usuario);
@@ -74,13 +58,39 @@ export function AuthProvider({ children }) {
   }
 
   useEffect(() => {
+    function limpiarHashDeAutenticacion() {
+      if (!window.location.hash.includes("access_token=")) {
+        return;
+      }
+
+      window.history.replaceState(
+        null,
+        document.title,
+        `${window.location.pathname}${window.location.search}`
+      );
+    }
+
+    async function manejarSesion(session) {
+      setSession(session);
+
+      try {
+        await cargarUsuario(session);
+      } catch (error) {
+        console.error("Error al validar la sesion:", error);
+        setSession(null);
+        setUsuario(null);
+        setMensajeAcceso("No se pudo validar tu sesion. Volve a iniciar sesion.");
+      } finally {
+        limpiarHashDeAutenticacion();
+        setLoading(false);
+      }
+    }
+
     async function iniciar() {
       try {
         const session = await getSession();
 
-        setSession(session);
-
-        await cargarUsuario(session);
+        await manejarSesion(session);
       } catch (error) {
         console.error("Error al iniciar sesión:", error);
         setSession(null);
@@ -95,11 +105,7 @@ export function AuthProvider({ children }) {
     const {
       data: { subscription },
     } = onAuthStateChange(async (_event, session) => {
-      setSession(session);
-
-      await cargarUsuario(session);
-
-      setLoading(false);
+      await manejarSesion(session);
     });
 
     return () => subscription.unsubscribe();
