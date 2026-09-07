@@ -7,11 +7,12 @@ import { obtenerUsuarioPorAuthId } from "../../services/usuario.service";
 import {
   estaEnHomeOffice,
 } from "../../services/home-office.service";
-import { 
+import {
   crearPedido,
   obtenerMisPedidosDelDia,
   actualizarPedido,
   eliminarPedido,
+  haPasadoHoraLimitePedidos,
 } from "../../services/pedido.service";
 import ConfirmModal from "../../components/common/ConfirmModal/ConfirmModal";
 
@@ -36,9 +37,24 @@ export default function MyOrder() {
     useState(false);
   const [modalEliminarPedido, setModalEliminarPedido] =
     useState(false);
+  const [horarioLimiteVencido, setHorarioLimiteVencido] = useState(
+    haPasadoHoraLimitePedidos()
+  );
+
+  useEffect(() => {
+    const intervalo = setInterval(() => {
+      setHorarioLimiteVencido(haPasadoHoraLimitePedidos());
+    }, 30000);
+
+    return () => clearInterval(intervalo);
+  }, []);
 
   async function confirmarEdicionPedido() {
     if (!editandoPedidoId) {
+      return;
+    }
+
+    if (horarioLimiteVencido) {
       return;
     }
 
@@ -78,6 +94,12 @@ export default function MyOrder() {
 
   async function manejarCrearPedido() {
     if (!pedidoAEnviar) {
+      return;
+    }
+
+    if (horarioLimiteVencido) {
+      setModalConfirmarPedido(false);
+      setPedidoAEnviar(null);
       return;
     }
 
@@ -205,6 +227,12 @@ export default function MyOrder() {
       return;
     }
 
+    if (horarioLimiteVencido) {
+      setModalEliminarPedido(false);
+      setPedidoAEliminar(null);
+      return;
+    }
+
     try {
       await eliminarPedido(pedidoAEliminar.id);
 
@@ -303,6 +331,7 @@ export default function MyOrder() {
                   <div className="my-order-existing-actions">
                     <button
                       type="button"
+                      disabled={horarioLimiteVencido}
                       onClick={() => comenzarEdicionPedido(pedido)}
                     >
                       Editar
@@ -310,6 +339,7 @@ export default function MyOrder() {
 
                     <button
                       type="button"
+                      disabled={horarioLimiteVencido}
                       onClick={() => solicitarEliminarPedido(pedido)}
                     >
                       Eliminar
@@ -442,10 +472,16 @@ export default function MyOrder() {
                   </p>
                 )}
 
+                {!enHomeOffice && horarioLimiteVencido && (
+                  <p className="home-office-message">
+                    El horario para realizar pedidos (hasta las 11:15) ya finalizó.
+                  </p>
+                )}
+
                 <button
                   type="button"
                   className="btn-primary"
-                  disabled={enHomeOffice}
+                  disabled={enHomeOffice || horarioLimiteVencido}
                   onClick={() => solicitarCrearPedido(publicacion)}
                 >
                   Pedir

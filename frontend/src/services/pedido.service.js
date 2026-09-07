@@ -1,5 +1,20 @@
 import { supabase } from "../lib/supabase";
 
+const HORA_LIMITE_PEDIDOS = "11:15";
+
+function obtenerHoraActualArgentina() {
+  return new Intl.DateTimeFormat("en-GB", {
+    timeZone: "America/Argentina/Buenos_Aires",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).format(new Date());
+}
+
+export function haPasadoHoraLimitePedidos() {
+  return obtenerHoraActualArgentina() >= HORA_LIMITE_PEDIDOS;
+}
+
 export async function obtenerPedidosDelDia() {
   const fechaHoy = new Intl.DateTimeFormat("en-CA", {
     timeZone: "America/Argentina/Buenos_Aires",
