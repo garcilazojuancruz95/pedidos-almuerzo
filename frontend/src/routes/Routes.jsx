@@ -5,7 +5,7 @@ import OperatorLayout from "../layouts/OperatorLayout";
 import ProtectedRoute from "../components/ProtectedRoute";
 
 import Users from "../pages/Users";
-import Dashboard from "../pages/dashboard/Dashboard";
+import Dashboard from "../pages/Dashboard/Dashboard.jsx";
 import Login from "../pages/Login";
 import Publications from "../pages/Publications";
 import DailyOrders from "../pages/DailyOrders";
