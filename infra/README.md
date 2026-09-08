@@ -53,6 +53,10 @@ sh supabase-docker/utils/generate-keys.sh --update-env   # corridas desde supaba
 # Reemplazar localhost por el dominio público:
 sed -i 's#http://localhost:8000#https://pedidos.nasini.com.ar#g; s#http://localhost:3000#https://pedidos.nasini.com.ar#g' supabase-docker/.env
 
+# Sin esto, supabase-auth crashea en loop: GoTrue no tiene default para este
+# booleano y .env.example no lo incluye.
+echo "GOOGLE_ENABLED=false" >> supabase-docker/.env
+
 aws secretsmanager put-secret-value \
   --secret-id pedidos-almuerzo/supabase-env \
   --secret-string file://supabase-docker/.env
