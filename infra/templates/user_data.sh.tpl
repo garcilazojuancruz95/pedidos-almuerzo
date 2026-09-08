@@ -61,5 +61,11 @@ DOMAIN=$DOMAIN_NAME
 LETSENCRYPT_EMAIL=$LETSENCRYPT_EMAIL
 EOF
 
+# El servicio "frontend" tiene "image" apuntando a ECR (repo privado): sin
+# login, "docker compose up" no puede pullearlo aunque el rol de la instancia
+# ya tenga permiso de lectura sobre el repo.
+aws ecr get-login-password --region "$AWS_REGION" \
+  | docker login --username AWS --password-stdin "$(aws sts get-caller-identity --query Account --output text).dkr.ecr.$AWS_REGION.amazonaws.com"
+
 cd "$APP_DIR"
 docker compose up -d
