@@ -33,8 +33,14 @@ resource "aws_iam_policy" "cicd_infra" {
       {
         Sid      = "TerraformStateLock"
         Effect   = "Allow"
-        Action   = ["dynamodb:GetItem", "dynamodb:PutItem", "dynamodb:DeleteItem"]
+        Action   = ["dynamodb:GetItem", "dynamodb:PutItem", "dynamodb:DeleteItem", "dynamodb:DescribeTable"]
         Resource = "arn:aws:dynamodb:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:table/terraform-locks"
+      },
+      {
+        Sid      = "TerraformStateBucketLocation"
+        Effect   = "Allow"
+        Action   = ["s3:GetBucketLocation"]
+        Resource = "arn:aws:s3:::terraform-tfstate-nasini"
       },
       {
         # EC2 no soporta scoping por ARN para la mayoría de las acciones de
