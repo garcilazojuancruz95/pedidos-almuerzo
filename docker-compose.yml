@@ -5,6 +5,7 @@ include:
 
 services:
   frontend:
+    image: 348847601284.dkr.ecr.us-east-1.amazonaws.com/pedidos-almuerzo-frontend:latest
     build:
       context: ./frontend
     container_name: pedidos-almuerzo-frontend

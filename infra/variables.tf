@@ -58,6 +58,12 @@ variable "letsencrypt_email" {
   default     = "sistemas@nasini.com.ar"
 }
 
+variable "repo_ssh_url" {
+  description = "URL SSH del repo que la instancia clona en el primer boot."
+  type        = string
+  default     = "git@github.com:nasini-organization/pedidos-almuerzo.git"
+}
+
 variable "github_actions_role_name" {
   description = "Nombre del rol OIDC de GitHub Actions ya existente al que se le agregan permisos de infra."
   type        = string

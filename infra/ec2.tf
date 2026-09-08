@@ -20,6 +20,33 @@ resource "aws_iam_role_policy_attachment" "ssm" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
 }
 
+resource "aws_iam_role_policy" "ecr_pull" {
+  name = "ecr-pull-frontend"
+  role = aws_iam_role.instance.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid      = "EcrAuth"
+        Effect   = "Allow"
+        Action   = ["ecr:GetAuthorizationToken"]
+        Resource = "*"
+      },
+      {
+        Sid    = "EcrPull"
+        Effect = "Allow"
+        Action = [
+          "ecr:BatchGetImage",
+          "ecr:GetDownloadUrlForLayer",
+          "ecr:BatchCheckLayerAvailability",
+        ]
+        Resource = "arn:aws:ecr:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:repository/pedidos-almuerzo-frontend"
+      }
+    ]
+  })
+}
+
 resource "aws_iam_role_policy" "read_own_secrets" {
   name = "read-secrets"
   role = aws_iam_role.instance.id
@@ -49,7 +76,7 @@ locals {
     supabase_env_secret   = aws_secretsmanager_secret.supabase_env.name
     domain_name           = var.domain_name
     letsencrypt_email     = var.letsencrypt_email
-    repo_ssh_url          = "git@github.com:nasini-organization/pedidos-almuerzo.git"
+    repo_ssh_url          = var.repo_ssh_url
   })
 }
 
@@ -77,6 +104,14 @@ resource "aws_instance" "app" {
 
   tags = {
     Name = "pedidos-almuerzo-app"
+  }
+
+  lifecycle {
+    # El AMI "latest" de SSM cambia cada pocas semanas. infra.yml corre
+    # terraform apply -auto-approve sin revisión humana: si no ignoramos el
+    # drift del AMI, cualquier apply de rutina reemplazaría la instancia y
+    # se perdería el volumen con Postgres y los certificados de Caddy.
+    ignore_changes = [ami]
   }
 }
 
