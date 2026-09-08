@@ -30,6 +30,15 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
+      - name: Write frontend build-time env (.env.docker)
+        # Vite compila estas variables adentro del bundle estático en build-time,
+        # no se pueden inyectar en runtime dentro del container.
+        run: |
+          cat > ./frontend/.env.docker <<EOF
+          VITE_SUPABASE_URL=${{ vars.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY=${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          EOF
+
       - name: Build, tag and push image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -40,3 +49,14 @@ jobs:
             ./frontend
           docker push "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
           docker push "$ECR_REGISTRY/$ECR_REPOSITORY:latest"
+
+      - name: Trigger redeploy on the instance
+        run: |
+          INSTANCE_ID=$(aws ec2 describe-instances \
+            --filters "Name=tag:Name,Values=pedidos-almuerzo-app" "Name=instance-state-name,Values=running" \
+            --query "Reservations[0].Instances[0].InstanceId" --output text --region "$AWS_REGION")
+          aws ssm send-command \
+            --instance-ids "$INSTANCE_ID" \
+            --document-name "AWS-RunShellScript" \
+            --parameters 'commands=["cd /opt/pedidos-almuerzo && git pull && docker compose pull frontend && docker compose up -d frontend"]' \
+            --region "$AWS_REGION"

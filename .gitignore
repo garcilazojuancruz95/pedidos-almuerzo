@@ -14,3 +14,10 @@ backups/
 
 # Archivos temporales de Supabase
 supabase/.temp/
+
+# Terraform
+infra/.terraform/
+infra/*.tfplan
+infra/crash.log
+infra/override.tf
+infra/override.tf.json

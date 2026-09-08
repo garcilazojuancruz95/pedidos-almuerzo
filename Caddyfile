@@ -1,0 +1,13 @@
+{
+	email {$LETSENCRYPT_EMAIL}
+}
+
+{$DOMAIN} {
+	# Rutas de la API de Supabase (Auth, PostgREST, Realtime, Storage, Edge Functions)
+	# van directo al API Gateway del stack self-hosted, preservando el path completo.
+	@supabase path /auth/* /rest/* /realtime/* /storage/* /functions/*
+	reverse_proxy @supabase api-gw:8000
+
+	# Todo lo demás es la SPA del frontend.
+	reverse_proxy frontend:80
+}
