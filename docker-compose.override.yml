@@ -14,6 +14,14 @@ services:
       - caddy_data:/data
       - caddy_config:/config
 
+  # Sin esto, supavisor no puede subir su ulimit de open files y crashea en
+  # loop ("cannot modify limit: Operation not permitted").
+  supavisor:
+    ulimits:
+      nofile:
+        soft: 100000
+        hard: 100000
+
 volumes:
   caddy_data:
   caddy_config:
