@@ -117,7 +117,13 @@ export default function Header() {
         <img
           src="/images/logo-nasini.svg"
           alt="Nasini"
-          className="header-logo"
+          className="header-logo header-logo-full"
+        />
+
+        <img
+          src="/images/logo.svg"
+          alt="Nasini"
+          className="header-logo header-logo-icon"
         />
 
         <h2>Plataforma de Pedidos de Almuerzo</h2>
