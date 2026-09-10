@@ -16,6 +16,7 @@ export default function PublicationCard({
   imagenesNuevasEdicion,
   onSeleccionarImagenes,
   onPegarImagenMenu,
+  onQuitarImagenNueva,
 }) {
 
   const [previsualizaciones, setPrevisualizaciones] = useState([]);
@@ -195,12 +196,25 @@ export default function PublicationCard({
             {previsualizaciones.length > 0 && (
               <div className="publication-menu-previews">
                 {previsualizaciones.map((url, index) => (
-                  <img
+                  <div
                     key={index}
-                    src={url}
-                    alt="Imagen pegada"
-                    className="publication-menu-preview"
-                  />
+                    className="publication-menu-preview-item"
+                  >
+                    <img
+                      src={url}
+                      alt="Imagen pegada"
+                      className="publication-menu-preview"
+                    />
+
+                    <button
+                      type="button"
+                      className="publication-menu-preview-quitar"
+                      onClick={() => onQuitarImagenNueva(index)}
+                      aria-label="Quitar imagen"
+                    >
+                      ×
+                    </button>
+                  </div>
                 ))}
               </div>
             )}

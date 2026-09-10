@@ -70,6 +70,18 @@ export default function Publications() {
     ]);
   }
 
+  function quitarImagenSeleccionada(index) {
+    setImagenesSeleccionadas((actuales) =>
+      actuales.filter((_, i) => i !== index)
+    );
+  }
+
+  function quitarImagenNuevaEdicion(index) {
+    setImagenesNuevasEdicion((actuales) =>
+      actuales.filter((_, i) => i !== index)
+    );
+  }
+
   function obtenerImagenDelPortapapeles(event) {
     const item = Array.from(event.clipboardData?.items || []).find(
       (item) => item.type.startsWith("image/")
@@ -421,12 +433,25 @@ export default function Publications() {
               {previsualizacionesFormulario.length > 0 && (
                 <div className="publication-menu-previews">
                   {previsualizacionesFormulario.map((url, index) => (
-                    <img
+                    <div
                       key={index}
-                      src={url}
-                      alt="Imagen pegada"
-                      className="publication-menu-preview"
-                    />
+                      className="publication-menu-preview-item"
+                    >
+                      <img
+                        src={url}
+                        alt="Imagen pegada"
+                        className="publication-menu-preview"
+                      />
+
+                      <button
+                        type="button"
+                        className="publication-menu-preview-quitar"
+                        onClick={() => quitarImagenSeleccionada(index)}
+                        aria-label="Quitar imagen"
+                      >
+                        ×
+                      </button>
+                    </div>
                   ))}
                 </div>
               )}
@@ -501,6 +526,7 @@ export default function Publications() {
             onEliminarImagen={manejarEliminarImagen}
             onSeleccionarImagenes={manejarSeleccionImagenesEdicion}
             onPegarImagenMenu={manejarPegadoImagenEdicion}
+            onQuitarImagenNueva={quitarImagenNuevaEdicion}
           />
         ))
       )}
