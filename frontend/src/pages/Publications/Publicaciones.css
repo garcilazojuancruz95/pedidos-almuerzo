@@ -54,6 +54,21 @@
   box-shadow: 0 0 0 2px rgba(25, 135, 84, 0.12);
 }
 
+.publication-menu-previews {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.publication-menu-preview {
+  width: 90px;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
 .publication-form-actions {
   display: flex;
   justify-content: flex-end;

@@ -33,6 +33,8 @@ export default function Publications() {
   const [modalEliminarAbierto, setModalEliminarAbierto] = useState(false);
   const [publicacionAEliminar, setPublicacionAEliminar] = useState(null);
   const [imagenesSeleccionadas, setImagenesSeleccionadas] = useState([]);
+  const [previsualizacionesFormulario, setPrevisualizacionesFormulario] =
+    useState([]);
   const [imagenesMarcadasEliminar, setImagenesMarcadasEliminar] = useState([]);
   const [imagenesNuevasEdicion, setImagenesNuevasEdicion] = useState([]);
   const [modalPublicacionExistente, setModalPublicacionExistente] = useState(false);
@@ -137,6 +139,18 @@ export default function Publications() {
       );
     }
   }
+
+  useEffect(() => {
+    const urls = imagenesSeleccionadas.map((archivo) =>
+      URL.createObjectURL(archivo)
+    );
+
+    setPrevisualizacionesFormulario(urls);
+
+    return () => {
+      urls.forEach((url) => URL.revokeObjectURL(url));
+    };
+  }, [imagenesSeleccionadas]);
 
   useEffect(() => {
     async function cargarDatos() {
@@ -403,6 +417,19 @@ export default function Publications() {
                 rows="8"
                 placeholder="Escribí el menú o pegá una imagen (Ctrl+V)"
               />
+
+              {previsualizacionesFormulario.length > 0 && (
+                <div className="publication-menu-previews">
+                  {previsualizacionesFormulario.map((url, index) => (
+                    <img
+                      key={index}
+                      src={url}
+                      alt="Imagen pegada"
+                      className="publication-menu-preview"
+                    />
+                  ))}
+                </div>
+              )}
             </div>
 
             <div className="publication-form-field">

@@ -191,6 +191,19 @@ export default function PublicationCard({
               rows="10"
               placeholder="Escribí el menú o pegá una imagen (Ctrl+V)"
             />
+
+            {previsualizaciones.length > 0 && (
+              <div className="publication-menu-previews">
+                {previsualizaciones.map((url, index) => (
+                  <img
+                    key={index}
+                    src={url}
+                    alt="Imagen pegada"
+                    className="publication-menu-preview"
+                  />
+                ))}
+              </div>
+            )}
           </div>
         ) : (
           <div className="publication-menu">
