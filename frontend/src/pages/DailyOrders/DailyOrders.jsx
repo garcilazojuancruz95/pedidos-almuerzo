@@ -15,6 +15,8 @@ import {
 
 import {
   obtenerHomeOfficeDelDia,
+  marcarHomeOffice,
+  quitarHomeOffice,
 } from "../../services/home-office.service";
 
 import { obtenerPublicaciones } from "../../services/publicacion.service";
@@ -200,6 +202,21 @@ export default function DailyOrders() {
     } catch (error) {
       console.error("Error al eliminar pedido:", error);
       alert("No se pudo eliminar el pedido.");
+    }
+  }
+
+  async function alternarHomeOffice(usuarioId, estaEnCasa) {
+    try {
+      if (estaEnCasa) {
+        await quitarHomeOffice(usuarioId);
+      } else {
+        await marcarHomeOffice(usuarioId);
+      }
+
+      await cargarDatos();
+    } catch (error) {
+      console.error("Error al cambiar estado de home office:", error);
+      alert("No se pudo actualizar el estado del empleado.");
     }
   }
 
@@ -673,8 +690,20 @@ export default function DailyOrders() {
                 ) : (
                   <ul className="pending-list">
                     {usuariosPendientes.map((usuario) => (
-                      <li key={usuario.id}>
-                        {usuario.nombre} {usuario.apellido}
+                      <li key={usuario.id} className="pending-list-item">
+                        <span>
+                          {usuario.nombre} {usuario.apellido}
+                        </span>
+
+                        <button
+                          type="button"
+                          className="btn-secondary"
+                          onClick={() =>
+                            alternarHomeOffice(usuario.id, false)
+                          }
+                        >
+                          Marcar en casa
+                        </button>
                       </li>
                     ))}
                   </ul>
