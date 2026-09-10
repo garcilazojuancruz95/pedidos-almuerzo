@@ -21,6 +21,7 @@
 
 .my-order-header {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
   gap: 20px;
@@ -131,6 +132,7 @@
 
 .my-order-existing-header {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
   gap: 15px;
@@ -317,4 +319,39 @@
 
 .image-viewer-close:hover {
   background: #ffffff;
+}
+
+@media (max-width: 600px) {
+  .my-order-card {
+    padding: 16px;
+  }
+
+  .my-order-existing {
+    padding: 14px;
+  }
+
+  .my-order-header h2 {
+    font-size: 20px;
+  }
+
+  .my-order-images img {
+    width: 100%;
+  }
+
+  .my-order-form button {
+    align-self: stretch;
+  }
+
+  .image-viewer {
+    padding: 16px;
+  }
+
+  .image-viewer-close {
+    top: 10px;
+    right: 10px;
+  }
+
+  .image-viewer-zoom-controls {
+    bottom: 12px;
+  }
 }

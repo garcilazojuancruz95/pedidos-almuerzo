@@ -1,41 +1,20 @@
 import { Outlet } from "react-router-dom";
 import Sidebar from "../components/layout/Sidebar/Sidebar";
 import Header from "../components/layout/Header/Header";
+import "./OperatorLayout.css";
 
 export default function OperatorLayout() {
   return (
-    <div
-      style={{
-        display: "grid",
-        gridTemplateColumns: "250px 1fr",
-        gridTemplateRows: "70px 1fr",
-        height: "100vh",
-      }}
-    >
-      <div
-        style={{
-          gridColumn: "1 / 3",
-        }}
-      >
+    <div className="operator-layout">
+      <div className="operator-layout-header">
         <Header />
       </div>
 
-      <aside
-        style={{
-          background: "var(--color-primary)",
-          color: "white",
-        }}
-      >
+      <aside className="operator-layout-sidebar">
         <Sidebar />
       </aside>
 
-      <main
-        style={{
-          padding: "24px",
-          background: "var(--color-background)",
-          overflow: "auto",
-        }}
-      >
+      <main className="operator-layout-main">
         <Outlet />
       </main>
     </div>
