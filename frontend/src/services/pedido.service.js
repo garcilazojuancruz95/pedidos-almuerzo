@@ -12,6 +12,10 @@ function obtenerHoraActualArgentina() {
 }
 
 export function haPasadoHoraLimitePedidos() {
+  if (import.meta.env.VITE_DESHABILITAR_HORARIO_LIMITE === "true") {
+    return false;
+  }
+
   return obtenerHoraActualArgentina() >= HORA_LIMITE_PEDIDOS;
 }
 
