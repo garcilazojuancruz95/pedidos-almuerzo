@@ -78,14 +78,11 @@ export default function Dashboard() {
 
   return (
     <div>
-      <h1>Dashboard</h1>
+      <div className="page-header">
+        <h1 className="page-title">Dashboard</h1>
+      </div>
 
-      <p
-        style={{
-          marginTop: "8px",
-          color: "#666",
-        }}
-      >
+      <p className="page-subtitle">
         Bienvenido, {usuario?.nombre || "usuario"}.
       </p>
 

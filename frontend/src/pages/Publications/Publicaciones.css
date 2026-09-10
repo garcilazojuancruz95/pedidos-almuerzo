@@ -1,3 +1,10 @@
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
 .publication-form {
   background: #ffffff;
   border-radius: 10px;

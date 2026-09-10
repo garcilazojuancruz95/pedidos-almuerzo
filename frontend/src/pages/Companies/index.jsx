@@ -1,5 +1,7 @@
 export default function Companies() {
   return (
-    <h1>Empresas</h1>
+    <div className="page-header">
+      <h1 className="page-title">Empresas</h1>
+    </div>
   );
 }

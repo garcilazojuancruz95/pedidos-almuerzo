@@ -384,7 +384,7 @@ export default function Publications() {
   return (
     <div className="publications">
       <div className="page-header">
-        <h1>Publicaciones del día</h1>
+        <h1 className="page-title">Publicaciones del día</h1>
 
         <button
           className="btn-primary"

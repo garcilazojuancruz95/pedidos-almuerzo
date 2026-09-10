@@ -319,7 +319,7 @@ export default function MyOrder() {
   return (
     <div className="my-order">
       <div className="page-header">
-        <h1>Mi pedido</h1>
+        <h1 className="page-title">Mi pedido</h1>
       </div>
 
         {misPedidos.length > 0 && (

@@ -344,8 +344,8 @@ export default function Usuarios() {
     <div className="usuarios-page">
       <div className="usuarios-header">
         <div>
-          <h1>Usuarios</h1>
-          <p>Administración de usuarios de la plataforma.</p>
+          <h1 className="page-title">Usuarios</h1>
+          <p className="page-subtitle">Administración de usuarios de la plataforma.</p>
         </div>
 
         <div className="usuarios-header-actions">

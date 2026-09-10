@@ -447,7 +447,7 @@ export default function DailyOrders() {
   return (
     <div className="daily-orders">
       <div className="page-header">
-        <h1>Pedidos del día</h1>
+        <h1 className="page-title">Pedidos del día</h1>
 
         <div className="header-actions">
           <button
