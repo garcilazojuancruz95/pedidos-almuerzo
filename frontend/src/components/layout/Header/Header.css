@@ -274,32 +274,32 @@
     }
 
     .home-office-switch {
-        width: 175px;
-        height: 44px;
+        width: 148px;
+        height: 40px;
     }
 
     .home-office-knob {
-        width: 36px;
-        height: 36px;
+        width: 32px;
+        height: 32px;
     }
 
     .home-office-switch.activo .home-office-knob {
-        left: calc(100% - 36px);
+        left: calc(100% - 32px);
     }
 
     .home-office-label {
-        padding-left: 44px;
-        padding-right: 6px;
-        font-size: 11px;
+        padding-left: 38px;
+        padding-right: 4px;
+        font-size: 10px;
     }
 
     .home-office-switch.activo .home-office-label {
-        padding-left: 6px;
-        padding-right: 44px;
+        padding-left: 4px;
+        padding-right: 38px;
     }
 
     .home-office-knob svg {
-        width: 19px;
-        height: 19px;
+        width: 16px;
+        height: 16px;
     }
 }
