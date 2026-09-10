@@ -225,6 +225,7 @@
 
   padding: 30px;
   box-sizing: border-box;
+  overflow: auto;
 
   background: rgba(0, 0, 0, 0.85);
 
@@ -242,6 +243,47 @@
 
   cursor: default;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+  transition: transform 0.1s ease-out;
+}
+
+.image-viewer-zoom-controls {
+  position: fixed;
+  bottom: 25px;
+  left: 50%;
+  transform: translateX(-50%);
+
+  display: flex;
+  gap: 10px;
+
+  z-index: 10000;
+}
+
+.image-viewer-zoom-controls button {
+  width: 44px;
+  height: 44px;
+  box-sizing: border-box;
+
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+
+  background: rgba(255, 255, 255, 0.9);
+  color: #333;
+
+  font-family: Arial, sans-serif;
+  font-size: 24px;
+  line-height: 44px;
+  text-align: center;
+
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.image-viewer-zoom-controls button:hover {
+  background: #ffffff;
 }
 
 .image-viewer-close {

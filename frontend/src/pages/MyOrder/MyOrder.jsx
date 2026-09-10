@@ -33,6 +33,7 @@ export default function MyOrder() {
   const [pedidoAEliminar, setPedidoAEliminar] = useState(null);
   const [enHomeOffice, setEnHomeOffice] = useState(false);
   const [imagenAmpliada, setImagenAmpliada] = useState(null);
+  const [zoomImagen, setZoomImagen] = useState(1);
   const [modalConfirmarEdicion, setModalConfirmarEdicion] =
     useState(false);
   const [modalEliminarPedido, setModalEliminarPedido] =
@@ -299,6 +300,24 @@ export default function MyOrder() {
     }));
   }
 
+  function acercarImagen() {
+    setZoomImagen((actual) => Math.min(actual + 0.25, 4));
+  }
+
+  function alejarImagen() {
+    setZoomImagen((actual) => Math.max(actual - 0.25, 1));
+  }
+
+  function manejarRuedaImagen(event) {
+    event.preventDefault();
+
+    const delta = event.deltaY > 0 ? -0.1 : 0.1;
+
+    setZoomImagen((actual) =>
+      Math.min(Math.max(actual + delta, 1), 4)
+    );
+  }
+
   if (loading) {
     return <p>Cargando publicaciones...</p>;
   }
@@ -428,7 +447,10 @@ export default function MyOrder() {
                           publicacion.rotiserias?.nombre ||
                           "rotisería"
                         }`}
-                        onClick={() => setImagenAmpliada(imagen.url)}
+                        onClick={() => {
+                          setImagenAmpliada(imagen.url);
+                          setZoomImagen(1);
+                        }}
                       />
                     ))}
                 </div>
@@ -496,6 +518,7 @@ export default function MyOrder() {
         <div
           className="image-viewer"
           onClick={() => setImagenAmpliada(null)}
+          onWheel={manejarRuedaImagen}
         >
           <button
             type="button"
@@ -506,10 +529,35 @@ export default function MyOrder() {
             ×
           </button>
 
+          <div className="image-viewer-zoom-controls">
+            <button
+              type="button"
+              onClick={(event) => {
+                event.stopPropagation();
+                alejarImagen();
+              }}
+              aria-label="Alejar imagen"
+            >
+              −
+            </button>
+
+            <button
+              type="button"
+              onClick={(event) => {
+                event.stopPropagation();
+                acercarImagen();
+              }}
+              aria-label="Acercar imagen"
+            >
+              +
+            </button>
+          </div>
+
           <img
             src={imagenAmpliada}
             alt="Menú ampliado"
             className="image-viewer-image"
+            style={{ transform: `scale(${zoomImagen})` }}
             onClick={(event) => event.stopPropagation()}
           />
         </div>
