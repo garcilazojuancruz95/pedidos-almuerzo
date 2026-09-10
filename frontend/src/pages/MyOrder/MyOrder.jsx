@@ -547,7 +547,10 @@ export default function MyOrder() {
             alt="Menú ampliado"
             className="image-viewer-image"
             style={{ transform: `scale(${zoomImagen})` }}
-            onClick={(event) => event.stopPropagation()}
+            onClick={(event) => {
+              event.stopPropagation();
+              acercarImagen();
+            }}
           />
         </div>
       )}
