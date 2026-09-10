@@ -1,0 +1,25 @@
+.summary {
+  display: flex;
+  gap: 20px;
+  margin-top: 30px;
+}
+
+.summary-card {
+  flex: 1;
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: var(--shadow);
+}
+
+.summary-card span {
+  color: #777;
+  font-size: 25px;
+  font-weight: 600;
+}
+
+.summary-card h2 {
+  margin-top: 10px;
+  font-size: 34px;
+  color: var(--color-primary);
+}

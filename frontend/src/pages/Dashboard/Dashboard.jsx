@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import "./Dashboard.css";
 
 import {
   obtenerPublicaciones,
@@ -86,63 +87,25 @@ export default function Dashboard() {
         Bienvenido, {usuario?.nombre || "usuario"}.
       </p>
 
-      <div
-        style={{
-          display: "flex",
-          gap: "20px",
-          marginTop: "30px",
-        }}
-      >
-        <div
-          style={{
-            background: "white",
-            padding: "20px",
-            borderRadius: "12px",
-            width: "220px",
-            boxShadow: "var(--shadow)",
-          }}
-        >
-          <h3>Publicaciones</h3>
-          <h1>{publicaciones.length}</h1>
+      <div className="summary">
+        <div className="summary-card">
+          <span>Publicaciones</span>
+          <h2>{publicaciones.length}</h2>
         </div>
 
-        <div
-          style={{
-            background: "white",
-            padding: "20px",
-            borderRadius: "12px",
-            width: "220px",
-            boxShadow: "var(--shadow)",
-          }}
-        >
-          <h3>Pedidos</h3>
-          <h1>{pedidos.length}</h1>
+        <div className="summary-card">
+          <span>Pedidos</span>
+          <h2>{pedidos.length}</h2>
         </div>
 
-        <div
-          style={{
-            background: "white",
-            padding: "20px",
-            borderRadius: "12px",
-            width: "220px",
-            boxShadow: "var(--shadow)",
-          }}
-        >
-          <h3>Pendientes</h3>
-          <h1>{usuariosPendientes.length}</h1>
+        <div className="summary-card">
+          <span>Pendientes</span>
+          <h2>{usuariosPendientes.length}</h2>
         </div>
 
-        <div
-          style={{
-            background: "white",
-            padding: "20px",
-            borderRadius: "12px",
-            width: "220px",
-            boxShadow: "var(--shadow)",
-          }}
-        >
-          <h3>Rotiserías</h3>
-          <h1>{rotiserias.length}</h1>
+        <div className="summary-card">
+          <span>Rotiserías</span>
+          <h2>{rotiserias.length}</h2>
         </div>
       </div>
     </div>
