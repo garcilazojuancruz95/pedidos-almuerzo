@@ -15,6 +15,7 @@ export default function PublicationCard({
   imagenesMarcadasEliminar,
   imagenesNuevasEdicion,
   onSeleccionarImagenes,
+  onPegarImagenMenu,
 }) {
 
   const [previsualizaciones, setPrevisualizaciones] = useState([]);
@@ -159,7 +160,10 @@ export default function PublicationCard({
             type="file"
             accept="image/*"
             multiple
-            onChange={onSeleccionarImagenes}
+            onChange={(event) => {
+              onSeleccionarImagenes(Array.from(event.target.files));
+              event.target.value = "";
+            }}
           />
         </div>
       )}
@@ -183,7 +187,9 @@ export default function PublicationCard({
               name="menuTexto"
               value={edicion.menuTexto}
               onChange={onCambioEdicion}
+              onPaste={onPegarImagenMenu}
               rows="10"
+              placeholder="Escribí el menú o pegá una imagen (Ctrl+V)"
             />
           </div>
         ) : (

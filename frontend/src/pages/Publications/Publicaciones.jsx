@@ -61,15 +61,43 @@ export default function Publications() {
     ]);
   }
 
-  function manejarSeleccionImagenesEdicion(event) {
-    const archivos = Array.from(event.target.files);
-
+  function manejarSeleccionImagenesEdicion(archivos) {
     setImagenesNuevasEdicion((actuales) => [
       ...actuales,
       ...archivos,
     ]);
+  }
 
-    event.target.value = "";
+  function obtenerImagenDelPortapapeles(event) {
+    const item = Array.from(event.clipboardData?.items || []).find(
+      (item) => item.type.startsWith("image/")
+    );
+
+    return item ? item.getAsFile() : null;
+  }
+
+  function manejarPegadoImagenFormulario(event) {
+    const archivo = obtenerImagenDelPortapapeles(event);
+
+    if (!archivo) {
+      return;
+    }
+
+    event.preventDefault();
+
+    setImagenesSeleccionadas((actuales) => [...actuales, archivo]);
+  }
+
+  function manejarPegadoImagenEdicion(event) {
+    const archivo = obtenerImagenDelPortapapeles(event);
+
+    if (!archivo) {
+      return;
+    }
+
+    event.preventDefault();
+
+    manejarSeleccionImagenesEdicion([archivo]);
   }
 
   function mostrarMensaje(titulo, mensaje) {
@@ -371,7 +399,9 @@ export default function Publications() {
                 name="menuTexto"
                 value={formulario.menuTexto}
                 onChange={manejarCambioFormulario}
+                onPaste={manejarPegadoImagenFormulario}
                 rows="8"
+                placeholder="Escribí el menú o pegá una imagen (Ctrl+V)"
               />
             </div>
 
@@ -443,6 +473,7 @@ export default function Publications() {
             imagenesNuevasEdicion={imagenesNuevasEdicion}
             onEliminarImagen={manejarEliminarImagen}
             onSeleccionarImagenes={manejarSeleccionImagenesEdicion}
+            onPegarImagenMenu={manejarPegadoImagenEdicion}
           />
         ))
       )}
