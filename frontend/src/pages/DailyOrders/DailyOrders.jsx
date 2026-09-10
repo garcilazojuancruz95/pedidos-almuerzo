@@ -734,7 +734,7 @@ export default function DailyOrders() {
                         alternarHomeOffice(usuario.id, true)
                       }
                     >
-                      Quitar de casa
+                      Quitar
                     </button>
                   </li>
                 ))}
