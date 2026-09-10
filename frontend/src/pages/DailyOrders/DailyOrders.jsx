@@ -722,8 +722,20 @@ export default function DailyOrders() {
             ) : (
               <ul className="pending-list">
                 {usuariosEnCasa.map((usuario) => (
-                  <li key={usuario.id}>
-                    {usuario.nombre} {usuario.apellido}
+                  <li key={usuario.id} className="pending-list-item">
+                    <span>
+                      {usuario.nombre} {usuario.apellido}
+                    </span>
+
+                    <button
+                      type="button"
+                      className="btn-secondary"
+                      onClick={() =>
+                        alternarHomeOffice(usuario.id, true)
+                      }
+                    >
+                      Quitar de casa
+                    </button>
                   </li>
                 ))}
               </ul>
