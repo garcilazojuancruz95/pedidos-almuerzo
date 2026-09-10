@@ -308,16 +308,6 @@ export default function MyOrder() {
     setZoomImagen((actual) => Math.max(actual - 0.25, 1));
   }
 
-  function manejarRuedaImagen(event) {
-    event.preventDefault();
-
-    const delta = event.deltaY > 0 ? -0.1 : 0.1;
-
-    setZoomImagen((actual) =>
-      Math.min(Math.max(actual + delta, 1), 4)
-    );
-  }
-
   if (loading) {
     return <p>Cargando publicaciones...</p>;
   }
@@ -518,7 +508,6 @@ export default function MyOrder() {
         <div
           className="image-viewer"
           onClick={() => setImagenAmpliada(null)}
-          onWheel={manejarRuedaImagen}
         >
           <button
             type="button"
