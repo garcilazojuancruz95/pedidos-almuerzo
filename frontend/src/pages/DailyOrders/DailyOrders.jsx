@@ -22,6 +22,7 @@ import {
 import { obtenerPublicaciones } from "../../services/publicacion.service";
 
 const PISO_POR_EMPRESA = {
+  "Nasini": "1",
   "Nasini S.A.": "1",
   "AMEPE": "3",
   "Market Hub": "4",
