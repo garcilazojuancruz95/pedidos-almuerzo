@@ -310,13 +310,9 @@ export default function MyOrder() {
 
   return (
     <div className="my-order">
-      <div className="page-header">
-        <h1 className="page-title">Mi pedido</h1>
-      </div>
-
         {misPedidos.length > 0 && (
           <div className="my-orders-today">
-            <h2>Mis pedidos de hoy</h2>
+            <h2>Mi pedido de hoy</h2>
 
             {misPedidos.map((pedido) => (
               <div
@@ -388,6 +384,10 @@ export default function MyOrder() {
             ))}
           </div>
         )}
+
+      <div className="page-header">
+        <h1 className="page-title">Menú</h1>
+      </div>
 
       {publicaciones.length === 0 ? (
         <p>No hay publicaciones disponibles para hoy.</p>

@@ -114,6 +114,16 @@ export default function Publications() {
     manejarSeleccionImagenesEdicion([archivo]);
   }
 
+  function compartirPorWhatsApp() {
+    const mensaje =
+      "Ya están cargadas las publicaciones del día en la plataforma: https://pedidos.nasini.com.ar";
+
+    window.open(
+      `https://wa.me/?text=${encodeURIComponent(mensaje)}`,
+      "_blank"
+    );
+  }
+
   function mostrarMensaje(titulo, mensaje) {
     setModalMensajeTitulo(titulo);
     setModalMensajeTexto(mensaje);
@@ -386,12 +396,32 @@ export default function Publications() {
       <div className="page-header">
         <h1 className="page-title">Publicaciones del día</h1>
 
-        <button
-          className="btn-primary"
-          onClick={() => setMostrarFormulario(true)}
-        >
-          + Nueva publicación
-        </button>
+        <div className="header-actions">
+          <button
+            className="btn-primary"
+            onClick={() => setMostrarFormulario(true)}
+          >
+            + Nueva publicación
+          </button>
+
+          <button
+            className="btn-whatsapp"
+            onClick={compartirPorWhatsApp}
+            title="Avisar por WhatsApp"
+            aria-label="Avisar por WhatsApp"
+          >
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347zM12.05 22.09h-.02a9.95 9.95 0 0 1-5.075-1.389l-.364-.216-3.775.99 1.008-3.68-.237-.377A9.95 9.95 0 0 1 2.058 12c0-5.52 4.492-10.01 10.02-10.01 2.676 0 5.19 1.043 7.083 2.938a9.947 9.947 0 0 1 2.93 7.089c-.003 5.52-4.494 10.073-10.041 10.073zm8.53-18.58A11.93 11.93 0 0 0 12.078 0C5.507 0 .16 5.335.157 11.892c0 2.096.549 4.142 1.595 5.945L.057 24l6.304-1.652a11.93 11.93 0 0 0 5.706 1.454h.005c6.57 0 11.918-5.335 11.921-11.893a11.83 11.83 0 0 0-3.413-8.399z" />
+            </svg>
+            Avisar por WhatsApp
+          </button>
+        </div>
       </div>
 
       {mostrarFormulario && (
@@ -509,26 +539,28 @@ export default function Publications() {
       {publicaciones.length === 0 ? (
         <p>No hay publicaciones cargadas.</p>
       ) : (
-        publicaciones.map((publicacion) => (
-          <PublicationCard
-            key={publicacion.id}
-            publicacion={publicacion}
-            rotiserias={rotiserias}
-            estaEditando={editandoId === publicacion.id}
-            edicion={edicion}
-            onEditar={comenzarEdicion}
-            onCambioEdicion={manejarCambioEdicion}
-            onGuardar={guardarEdicion}
-            onCancelar={cancelarEdicion}
-            onEliminar={solicitarEliminarPublicacion}
-            imagenesMarcadasEliminar={imagenesMarcadasEliminar}
-            imagenesNuevasEdicion={imagenesNuevasEdicion}
-            onEliminarImagen={manejarEliminarImagen}
-            onSeleccionarImagenes={manejarSeleccionImagenesEdicion}
-            onPegarImagenMenu={manejarPegadoImagenEdicion}
-            onQuitarImagenNueva={quitarImagenNuevaEdicion}
-          />
-        ))
+        <div className="publications-grid">
+          {publicaciones.map((publicacion) => (
+            <PublicationCard
+              key={publicacion.id}
+              publicacion={publicacion}
+              rotiserias={rotiserias}
+              estaEditando={editandoId === publicacion.id}
+              edicion={edicion}
+              onEditar={comenzarEdicion}
+              onCambioEdicion={manejarCambioEdicion}
+              onGuardar={guardarEdicion}
+              onCancelar={cancelarEdicion}
+              onEliminar={solicitarEliminarPublicacion}
+              imagenesMarcadasEliminar={imagenesMarcadasEliminar}
+              imagenesNuevasEdicion={imagenesNuevasEdicion}
+              onEliminarImagen={manejarEliminarImagen}
+              onSeleccionarImagenes={manejarSeleccionImagenesEdicion}
+              onPegarImagenMenu={manejarPegadoImagenEdicion}
+              onQuitarImagenNueva={quitarImagenNuevaEdicion}
+            />
+          ))}
+        </div>
       )}
       <ConfirmModal
         abierto={modalEliminarAbierto}

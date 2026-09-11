@@ -51,7 +51,7 @@ export default function Sidebar() {
         {esEmpleado && (
           <NavLink to="/my-order">
             <ClipboardList size={20} />
-            Mi pedido
+            Menú
           </NavLink>
         )}
 
