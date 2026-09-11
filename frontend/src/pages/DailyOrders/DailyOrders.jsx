@@ -362,19 +362,11 @@ export default function DailyOrders() {
     const hoja = XLSX.utils.json_to_sheet(datos);
 
     hoja["!cols"] = [
-      { wch: 8 },
-      { wch: 28 },
-      { wch: 55 },
-      { wch: 22 },
+      { wch: 6 },
+      { wch: 20 },
+      { wch: 35 },
+      { wch: 16 },
     ];
-
-    hoja["!pageSetup"] = {
-      orientation: "landscape",
-      fitToWidth: 1,
-      fitToHeight: 0,
-    };
-
-    hoja["!fitToPage"] = true;
 
     const rango = XLSX.utils.decode_range(hoja["!ref"]);
 
