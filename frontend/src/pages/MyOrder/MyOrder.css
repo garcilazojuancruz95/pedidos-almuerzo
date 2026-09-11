@@ -112,7 +112,6 @@
   border-radius: 6px;
   font-size: 14px;
   font-family: inherit;
-  resize: vertical;
 }
 
 .my-order-form textarea:focus {
@@ -185,7 +184,6 @@
   border-radius: 6px;
   font-size: 14px;
   font-family: inherit;
-  resize: vertical;
 }
 
 .my-order-edit-actions {

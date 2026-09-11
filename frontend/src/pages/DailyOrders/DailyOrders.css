@@ -188,6 +188,22 @@ tbody tr:hover {
   font-weight: 600;
 }
 
+.order-group td textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 14px;
+  background: white;
+}
+
+.order-group td textarea:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
 .order-form-card {
     background: white;
     padding: 28px;
@@ -231,7 +247,6 @@ tbody tr:hover {
 }
 
 .order-form-field textarea {
-    resize: vertical;
     min-height: 110px;
 }
 

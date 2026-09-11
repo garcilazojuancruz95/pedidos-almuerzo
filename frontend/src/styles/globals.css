@@ -36,6 +36,10 @@ select {
   font: inherit;
 }
 
+textarea {
+  resize: none;
+}
+
 button {
   cursor: pointer;
 }

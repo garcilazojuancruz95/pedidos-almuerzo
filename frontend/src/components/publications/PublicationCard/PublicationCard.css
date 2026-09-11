@@ -90,10 +90,6 @@
   font-family: inherit;
 }
 
-.publication-form-field textarea {
-  resize: vertical;
-}
-
 .publication-form-field input:focus,
 .publication-form-field select:focus,
 .publication-form-field textarea:focus {
