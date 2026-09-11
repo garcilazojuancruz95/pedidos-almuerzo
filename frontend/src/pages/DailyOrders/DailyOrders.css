@@ -500,3 +500,92 @@ tbody tr:hover {
   opacity: 0.6;
   cursor: default;
 }
+
+.orders-cards-mobile {
+  display: none;
+}
+
+@media (max-width: 600px) {
+  .summary {
+    flex-wrap: wrap;
+  }
+
+  .summary-card {
+    flex: 1 1 45%;
+  }
+
+  .tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+
+  .tabs button {
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+
+  .pending-list-item {
+    flex-wrap: wrap;
+  }
+
+  .orders-table-desktop {
+    display: none;
+  }
+
+  .orders-cards-mobile {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 12px;
+  }
+
+  .order-card-mobile {
+    border: 1px solid #eee;
+    border-radius: 10px;
+    padding: 14px;
+  }
+
+  .order-card-mobile-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 0;
+    border-bottom: 1px solid #f2f2f2;
+  }
+
+  .order-card-mobile-pedido {
+    padding: 10px 0;
+    border-bottom: 1px solid #f2f2f2;
+  }
+
+  .order-card-mobile-pedido textarea {
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 6px;
+    padding: 8px 10px;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 14px;
+  }
+
+  .order-card-mobile-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: #777;
+    text-transform: uppercase;
+  }
+
+  .order-card-mobile-actions {
+    display: flex;
+    gap: 8px;
+    padding-top: 10px;
+  }
+
+  .order-card-mobile-actions button {
+    flex: 1;
+  }
+}

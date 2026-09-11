@@ -804,7 +804,7 @@ export default function DailyOrders() {
           <div className="order-group" key={rotiseria.id}>
             <h2>{rotiseria.nombre}</h2>
 
-            <table>
+            <table className="orders-table-desktop">
               <thead>
                 <tr>
                   <th>Piso</th>
@@ -893,6 +893,100 @@ export default function DailyOrders() {
                 ))}
               </tbody>
             </table>
+
+            <div className="orders-cards-mobile">
+              {rotiseria.pedidos.map((pedido) => (
+                <div className="order-card-mobile" key={pedido.id}>
+                  <div className="order-card-mobile-row">
+                    <span className="order-card-mobile-label">
+                      Piso
+                    </span>
+                    <span>{obtenerPiso(pedido)}</span>
+                  </div>
+
+                  <div className="order-card-mobile-row">
+                    <span className="order-card-mobile-label">
+                      Nombre
+                    </span>
+                    <span>
+                      {pedido.usuarios
+                        ? `${pedido.usuarios.nombre} ${pedido.usuarios.apellido}`
+                        : "Sin usuario"}
+                    </span>
+                  </div>
+
+                  <div className="order-card-mobile-row">
+                    <span className="order-card-mobile-label">
+                      Rotisería
+                    </span>
+                    <span>
+                      {pedido.rotiserias?.nombre || "Sin rotisería"}
+                    </span>
+                  </div>
+
+                  <div className="order-card-mobile-pedido">
+                    <span className="order-card-mobile-label">
+                      Pedido
+                    </span>
+
+                    {editandoPedidoId === pedido.id ? (
+                      <textarea
+                        value={textoEdicionPedido}
+                        onChange={(event) =>
+                          setTextoEdicionPedido(event.target.value)
+                        }
+                        rows="3"
+                      />
+                    ) : (
+                      <div>{pedido.pedido}</div>
+                    )}
+                  </div>
+
+                  <div className="order-card-mobile-actions">
+                    {editandoPedidoId === pedido.id ? (
+                      <>
+                        <button
+                          type="button"
+                          className="btn-edit"
+                          onClick={guardarEdicionPedido}
+                        >
+                          Guardar
+                        </button>
+
+                        <button
+                          type="button"
+                          className="btn-secondary"
+                          onClick={() => {
+                            setEditandoPedidoId(null);
+                            setTextoEdicionPedido("");
+                          }}
+                        >
+                          Cancelar
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <button
+                          type="button"
+                          className="btn-edit"
+                          onClick={() => comenzarEdicionPedido(pedido)}
+                        >
+                          Editar
+                        </button>
+
+                        <button
+                          type="button"
+                          className="btn-delete"
+                          onClick={() => solicitarEliminarPedido(pedido)}
+                        >
+                          Eliminar
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         ))}
       </div>
