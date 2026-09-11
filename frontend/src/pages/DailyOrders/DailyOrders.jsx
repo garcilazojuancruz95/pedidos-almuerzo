@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import "./DailyOrders.css";
 import ExcelJS from "exceljs";
-import { Search } from "lucide-react";
+import { Search, Plus, FileSpreadsheet, Printer } from "lucide-react";
 
 import {
   obtenerPedidosDelDia,
@@ -473,21 +473,29 @@ export default function DailyOrders() {
 
         <div className="header-actions">
           <button
-            className="btn-primary"
+            className="btn-icon"
             onClick={() => setMostrarFormularioPedido(true)}
+            title="Cargar pedido"
+            aria-label="Cargar pedido"
           >
-            + Cargar pedido
+            <Plus size={18} />
           </button>
 
           <button
-            className="btn-primary"
+            className="btn-icon"
             onClick={exportarExcel}
+            title="Exportar Excel"
+            aria-label="Exportar Excel"
           >
-            Exportar Excel
+            <FileSpreadsheet size={18} />
           </button>
 
-          <button className="btn-primary">
-            Imprimir
+          <button
+            className="btn-icon"
+            title="Imprimir"
+            aria-label="Imprimir"
+          >
+            <Printer size={18} />
           </button>
         </div>
       </div>
