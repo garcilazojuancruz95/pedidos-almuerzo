@@ -503,11 +503,7 @@ export default function DailyOrders() {
               <option value="">Seleccionar empleado</option>
 
               {usuarios
-                .filter(
-                  (usuario) =>
-                    usuario.activo &&
-                    usuario.roles?.nombre === "Empleado"
-                )
+                .filter((usuario) => usuario.activo)
                 .sort((a, b) => {
                   const nombreA = `${a.nombre || ""} ${a.apellido || ""}`;
                   const nombreB = `${b.nombre || ""} ${b.apellido || ""}`;
