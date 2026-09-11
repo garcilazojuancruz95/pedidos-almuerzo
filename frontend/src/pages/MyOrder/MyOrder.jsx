@@ -15,6 +15,7 @@ import {
   haPasadoHoraLimitePedidos,
 } from "../../services/pedido.service";
 import ConfirmModal from "../../components/common/ConfirmModal/ConfirmModal";
+import ImageViewer from "../../components/common/ImageViewer/ImageViewer";
 
 export default function MyOrder() {
   const [publicaciones, setPublicaciones] = useState([]);
@@ -33,7 +34,6 @@ export default function MyOrder() {
   const [pedidoAEliminar, setPedidoAEliminar] = useState(null);
   const [enHomeOffice, setEnHomeOffice] = useState(false);
   const [imagenAmpliada, setImagenAmpliada] = useState(null);
-  const [zoomImagen, setZoomImagen] = useState(1);
   const [modalConfirmarEdicion, setModalConfirmarEdicion] =
     useState(false);
   const [modalEliminarPedido, setModalEliminarPedido] =
@@ -300,14 +300,6 @@ export default function MyOrder() {
     }));
   }
 
-  function acercarImagen() {
-    setZoomImagen((actual) => Math.min(actual + 0.25, 4));
-  }
-
-  function alejarImagen() {
-    setZoomImagen((actual) => Math.max(actual - 0.25, 1));
-  }
-
   if (loading) {
     return <p>Cargando publicaciones...</p>;
   }
@@ -437,10 +429,9 @@ export default function MyOrder() {
                           publicacion.rotiserias?.nombre ||
                           "rotisería"
                         }`}
-                        onClick={() => {
-                          setImagenAmpliada(imagen.url);
-                          setZoomImagen(1);
-                        }}
+                        onClick={() =>
+                          setImagenAmpliada(imagen.url)
+                        }
                       />
                     ))}
                 </div>
@@ -504,56 +495,11 @@ export default function MyOrder() {
         </div>
       )}
 
-      {imagenAmpliada && (
-        <div
-          className="image-viewer"
-          onClick={() => setImagenAmpliada(null)}
-        >
-          <button
-            type="button"
-            className="image-viewer-close"
-            onClick={() => setImagenAmpliada(null)}
-            aria-label="Cerrar imagen"
-          >
-            ×
-          </button>
-
-          <div className="image-viewer-zoom-controls">
-            <button
-              type="button"
-              onClick={(event) => {
-                event.stopPropagation();
-                alejarImagen();
-              }}
-              aria-label="Alejar imagen"
-            >
-              −
-            </button>
-
-            <button
-              type="button"
-              onClick={(event) => {
-                event.stopPropagation();
-                acercarImagen();
-              }}
-              aria-label="Acercar imagen"
-            >
-              +
-            </button>
-          </div>
-
-          <img
-            src={imagenAmpliada}
-            alt="Menú ampliado"
-            className="image-viewer-image"
-            style={{ transform: `scale(${zoomImagen})` }}
-            onClick={(event) => {
-              event.stopPropagation();
-              acercarImagen();
-            }}
-          />
-        </div>
-      )}
+      <ImageViewer
+        src={imagenAmpliada}
+        alt="Menú ampliado"
+        onClose={() => setImagenAmpliada(null)}
+      />
       <ConfirmModal
         abierto={modalConfirmarPedido}
         titulo="Enviar pedido"

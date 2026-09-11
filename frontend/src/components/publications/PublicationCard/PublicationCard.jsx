@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import "./PublicationCard.css";
+import ImageViewer from "../../common/ImageViewer/ImageViewer";
 
 export default function PublicationCard({
   publicacion,
@@ -20,6 +21,7 @@ export default function PublicationCard({
 }) {
 
   const [previsualizaciones, setPrevisualizaciones] = useState([]);
+  const [imagenAmpliada, setImagenAmpliada] = useState(null);
 
   useEffect(() => {
     const urls = imagenesNuevasEdicion.map((archivo) =>
@@ -119,6 +121,7 @@ export default function PublicationCard({
                       publicacion.rotiserias?.nombre ||
                       "rotisería"
                     }`}
+                    onClick={() => setImagenAmpliada(imagen.url)}
                   />
 
                   {estaEditando && (
@@ -246,6 +249,12 @@ export default function PublicationCard({
           )
         )}
       </div>
+
+      <ImageViewer
+        src={imagenAmpliada}
+        alt="Imagen de la publicación"
+        onClose={() => setImagenAmpliada(null)}
+      />
     </div>
   );
 }
