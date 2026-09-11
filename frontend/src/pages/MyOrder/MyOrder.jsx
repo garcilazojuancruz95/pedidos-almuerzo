@@ -400,34 +400,30 @@ export default function MyOrder() {
               .slice()
               .sort((a, b) => a.orden - b.orden);
 
-            const primeraImagen = imagenes[0];
-            const imagenesRestantes = imagenes.length - 1;
-
             return (
             <div
               className="my-order-card"
               key={publicacion.id}
             >
-              {primeraImagen && (
-                <div
-                  className="my-order-thumbnail"
-                  onClick={() =>
-                    setImagenAmpliada(primeraImagen.url)
-                  }
-                >
-                  <img
-                    src={primeraImagen.url}
-                    alt={`Menú de ${
-                      publicacion.rotiserias?.nombre ||
-                      "rotisería"
-                    }`}
-                  />
-
-                  {imagenesRestantes > 0 && (
-                    <span className="my-order-thumbnail-badge">
-                      +{imagenesRestantes}
-                    </span>
-                  )}
+              {imagenes.length > 0 && (
+                <div className="my-order-thumbnails">
+                  {imagenes.map((imagen) => (
+                    <div
+                      className="my-order-thumbnail"
+                      key={imagen.id}
+                      onClick={() =>
+                        setImagenAmpliada(imagen.url)
+                      }
+                    >
+                      <img
+                        src={imagen.url}
+                        alt={`Menú de ${
+                          publicacion.rotiserias?.nombre ||
+                          "rotisería"
+                        }`}
+                      />
+                    </div>
+                  ))}
                 </div>
               )}
 
