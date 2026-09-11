@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import "./DailyOrders.css";
 import * as XLSX from "xlsx-js-style";
+import { Search } from "lucide-react";
 
 import {
   obtenerPedidosDelDia,
@@ -57,6 +58,9 @@ export default function DailyOrders() {
     pedido: "",
   });
   const [usuarioSeleccionado, setUsuarioSeleccionado] = useState("");
+  const [busquedaEmpleado, setBusquedaEmpleado] = useState("");
+  const [mostrarOpcionesEmpleado, setMostrarOpcionesEmpleado] =
+    useState(false);
   const [publicacionSeleccionada, setPublicacionSeleccionada] =
     useState("");
   const [textoPedido, setTextoPedido] = useState("");
@@ -125,6 +129,7 @@ export default function DailyOrders() {
       setMostrarModalCarga(false);
 
       setUsuarioSeleccionado("");
+      setBusquedaEmpleado("");
       setPublicacionSeleccionada("");
       setTextoPedido("");
 
@@ -510,30 +515,57 @@ export default function DailyOrders() {
           <div className="order-form-field">
             <label>Empleado</label>
 
-            <select
-              value={usuarioSeleccionado}
-              onChange={(event) =>
-                setUsuarioSeleccionado(event.target.value)
-              }
-            >
-              <option value="">Seleccionar empleado</option>
+            <div className="employee-search">
+              <Search size={16} className="employee-search-icon" />
 
-              {usuarios
-                .filter((usuario) => usuario.activo)
-                .sort((a, b) => {
-                  const nombreA = `${a.nombre || ""} ${a.apellido || ""}`;
-                  const nombreB = `${b.nombre || ""} ${b.apellido || ""}`;
+              <input
+                type="text"
+                placeholder="Buscar empleado..."
+                value={busquedaEmpleado}
+                onChange={(event) => {
+                  setBusquedaEmpleado(event.target.value);
+                  setUsuarioSeleccionado("");
+                  setMostrarOpcionesEmpleado(true);
+                }}
+                onFocus={() => setMostrarOpcionesEmpleado(true)}
+                onBlur={() => setMostrarOpcionesEmpleado(false)}
+              />
 
-                  return nombreA.localeCompare(nombreB, "es", {
-                    sensitivity: "base",
-                  });
-                })
-                .map((usuario) => (
-                  <option key={usuario.id} value={usuario.id}>
-                    {usuario.nombre} {usuario.apellido}
-                  </option>
-                ))}
-            </select>
+              {mostrarOpcionesEmpleado && (
+                <ul className="employee-search-options">
+                  {usuarios
+                    .filter((usuario) => usuario.activo)
+                    .filter((usuario) =>
+                      `${usuario.nombre} ${usuario.apellido}`
+                        .toLowerCase()
+                        .includes(busquedaEmpleado.toLowerCase())
+                    )
+                    .sort((a, b) => {
+                      const nombreA = `${a.nombre || ""} ${a.apellido || ""}`;
+                      const nombreB = `${b.nombre || ""} ${b.apellido || ""}`;
+
+                      return nombreA.localeCompare(nombreB, "es", {
+                        sensitivity: "base",
+                      });
+                    })
+                    .map((usuario) => (
+                      <li
+                        key={usuario.id}
+                        onMouseDown={(event) => {
+                          event.preventDefault();
+                          setUsuarioSeleccionado(usuario.id);
+                          setBusquedaEmpleado(
+                            `${usuario.nombre} ${usuario.apellido}`
+                          );
+                          setMostrarOpcionesEmpleado(false);
+                        }}
+                      >
+                        {usuario.nombre} {usuario.apellido}
+                      </li>
+                    ))}
+                </ul>
+              )}
+            </div>
             {erroresCarga.empleado && (
               <p className="form-error">
                 {erroresCarga.empleado}
@@ -594,6 +626,7 @@ export default function DailyOrders() {
               onClick={() => {
                 setMostrarFormularioPedido(false);
                 setUsuarioSeleccionado("");
+                setBusquedaEmpleado("");
                 setPublicacionSeleccionada("");
                 setTextoPedido("");
                 setErroresCarga({
