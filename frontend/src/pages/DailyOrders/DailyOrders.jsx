@@ -479,6 +479,7 @@ export default function DailyOrders() {
             aria-label="Cargar pedido"
           >
             <Plus size={18} />
+            <span className="btn-icon-label">Cargar pedido</span>
           </button>
 
           <button
@@ -488,6 +489,7 @@ export default function DailyOrders() {
             aria-label="Exportar Excel"
           >
             <FileSpreadsheet size={18} />
+            <span className="btn-icon-label">Exportar Excel</span>
           </button>
 
           <button
@@ -496,6 +498,7 @@ export default function DailyOrders() {
             aria-label="Imprimir"
           >
             <Printer size={18} />
+            <span className="btn-icon-label">Imprimir</span>
           </button>
         </div>
       </div>
