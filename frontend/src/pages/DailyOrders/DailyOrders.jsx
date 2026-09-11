@@ -348,15 +348,15 @@ export default function DailyOrders() {
     const datos = pedidosFiltrados.map((pedido) => ({
       Piso: obtenerPiso(pedido),
 
-      Usuario: pedido.usuarios
+      Nombre: pedido.usuarios
         ? `${pedido.usuarios.nombre || ""} ${pedido.usuarios.apellido || ""}`.trim()
         : "Sin usuario",
 
-      Rotisería:
-        pedido.rotiserias?.nombre || "Sin rotisería",
-
       Pedido:
         pedido.pedido || "",
+
+      Rotisería:
+        pedido.rotiserias?.nombre || "Sin rotisería",
     }));
 
     const hoja = XLSX.utils.json_to_sheet(datos);
@@ -364,8 +364,8 @@ export default function DailyOrders() {
     hoja["!cols"] = [
       { wch: 8 },
       { wch: 28 },
-      { wch: 22 },
       { wch: 55 },
+      { wch: 22 },
     ];
 
     hoja["!pageSetup"] = {
@@ -824,9 +824,9 @@ export default function DailyOrders() {
               <thead>
                 <tr>
                   <th>Piso</th>
-                  <th>Usuario</th>
-                  <th>Rotisería</th>
+                  <th>Nombre</th>
                   <th>Pedido</th>
+                  <th>Rotisería</th>
                   <th>Acciones</th>
                 </tr>
               </thead>
@@ -845,10 +845,6 @@ export default function DailyOrders() {
                     </td>
 
                     <td>
-                      {pedido.rotiserias?.nombre || "Sin rotisería"}
-                    </td>
-
-                    <td>
                       {editandoPedidoId === pedido.id ? (
                         <textarea
                           value={textoEdicionPedido}
@@ -860,6 +856,10 @@ export default function DailyOrders() {
                       ) : (
                         pedido.pedido
                       )}
+                    </td>
+
+                    <td>
+                      {pedido.rotiserias?.nombre || "Sin rotisería"}
                     </td>
                     <td>
                       <div className="order-actions">
