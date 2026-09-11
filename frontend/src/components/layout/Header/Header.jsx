@@ -202,7 +202,7 @@ export default function Header() {
           </button>
         )}
 
-        <span>
+        <span className="header-user-name">
           {usuario
             ? `${usuario.nombre} ${usuario.apellido}`
             : ""}

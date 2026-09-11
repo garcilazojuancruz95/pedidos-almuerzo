@@ -261,6 +261,10 @@
         padding: 0 10px;
     }
 
+    .header-user-name {
+        display: none;
+    }
+
     .header-logo-full {
         display: none;
     }
