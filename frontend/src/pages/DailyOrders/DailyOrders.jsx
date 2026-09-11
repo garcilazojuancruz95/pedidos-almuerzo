@@ -21,6 +21,18 @@ import {
 
 import { obtenerPublicaciones } from "../../services/publicacion.service";
 
+const PISO_POR_EMPRESA = {
+  "Nasini S.A.": "1",
+  "AMEPE": "3",
+  "Market Hub": "4",
+};
+
+function obtenerPiso(pedido) {
+  const nombreEmpresa = pedido.usuarios?.empresas?.nombre;
+
+  return PISO_POR_EMPRESA[nombreEmpresa] || "Sin piso";
+}
+
 export default function DailyOrders() {
 
   const [pedidos, setPedidos] = useState([]);
@@ -328,8 +340,7 @@ export default function DailyOrders() {
     }
 
     const datos = pedidosFiltrados.map((pedido) => ({
-      Empresa:
-        pedido.usuarios?.empresas?.nombre || "Sin empresa",
+      Piso: obtenerPiso(pedido),
 
       Usuario: pedido.usuarios
         ? `${pedido.usuarios.nombre || ""} ${pedido.usuarios.apellido || ""}`.trim()
@@ -340,20 +351,24 @@ export default function DailyOrders() {
 
       Pedido:
         pedido.pedido || "",
-
-      Observaciones:
-        pedido.observaciones || "",
     }));
 
     const hoja = XLSX.utils.json_to_sheet(datos);
 
     hoja["!cols"] = [
-      { wch: 25 },
-      { wch: 30 },
-      { wch: 25 },
-      { wch: 50 },
-      { wch: 40 },
+      { wch: 8 },
+      { wch: 28 },
+      { wch: 22 },
+      { wch: 55 },
     ];
+
+    hoja["!pageSetup"] = {
+      orientation: "landscape",
+      fitToWidth: 1,
+      fitToHeight: 0,
+    };
+
+    hoja["!fitToPage"] = true;
 
     const rango = XLSX.utils.decode_range(hoja["!ref"]);
 
@@ -774,7 +789,7 @@ export default function DailyOrders() {
             <table>
               <thead>
                 <tr>
-                  <th>Empresa</th>
+                  <th>Piso</th>
                   <th>Usuario</th>
                   <th>Rotisería</th>
                   <th>Pedido</th>
@@ -786,8 +801,7 @@ export default function DailyOrders() {
                 {rotiseria.pedidos.map((pedido) => (
                   <tr key={pedido.id}>
                     <td>
-                      {pedido.usuarios?.empresas?.nombre ||
-                        "Sin empresa"}
+                      {obtenerPiso(pedido)}
                     </td>
 
                     <td>
