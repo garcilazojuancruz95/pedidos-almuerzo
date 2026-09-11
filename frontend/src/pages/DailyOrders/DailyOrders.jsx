@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import "./DailyOrders.css";
-import * as XLSX from "xlsx-js-style";
+import ExcelJS from "exceljs";
 import { Search } from "lucide-react";
 
 import {
@@ -340,104 +340,85 @@ export default function DailyOrders() {
           (pedido) => pedido.rotiseria_id === filtroRotiseria
         );
 
-  function exportarExcel() {
+  async function exportarExcel() {
     if (pedidosFiltrados.length === 0) {
       return;
     }
 
-    const datos = pedidosFiltrados.map((pedido) => ({
-      Piso: obtenerPiso(pedido),
+    const libro = new ExcelJS.Workbook();
 
-      Nombre: pedido.usuarios
-        ? `${pedido.usuarios.nombre || ""} ${pedido.usuarios.apellido || ""}`.trim()
-        : "Sin usuario",
+    const hoja = libro.addWorksheet("Pedidos", {
+      pageSetup: {
+        orientation: "landscape",
+        fitToPage: true,
+        fitToWidth: 1,
+        fitToHeight: 0,
+      },
+    });
 
-      Pedido:
-        pedido.pedido || "",
-
-      Rotisería:
-        pedido.rotiserias?.nombre || "Sin rotisería",
-    }));
-
-    const hoja = XLSX.utils.json_to_sheet(datos);
-
-    hoja["!cols"] = [
-      { wch: 6 },
-      { wch: 20 },
-      { wch: 35 },
-      { wch: 16 },
+    hoja.columns = [
+      { header: "Piso", key: "piso", width: 8 },
+      { header: "Nombre", key: "nombre", width: 28 },
+      { header: "Pedido", key: "pedido", width: 55 },
+      { header: "Rotisería", key: "rotiseria", width: 22 },
     ];
 
-    const rango = XLSX.utils.decode_range(hoja["!ref"]);
+    pedidosFiltrados.forEach((pedido) => {
+      hoja.addRow({
+        piso: obtenerPiso(pedido),
+        nombre: pedido.usuarios
+          ? `${pedido.usuarios.nombre || ""} ${pedido.usuarios.apellido || ""}`.trim()
+          : "Sin usuario",
+        pedido: pedido.pedido || "",
+        rotiseria: pedido.rotiserias?.nombre || "Sin rotisería",
+      });
+    });
 
-    for (let fila = rango.s.r; fila <= rango.e.r; fila++) {
-      for (let columna = rango.s.c; columna <= rango.e.c; columna++) {
-        const celda = hoja[XLSX.utils.encode_cell({
-          r: fila,
-          c: columna,
-        })];
+    hoja.eachRow((fila, numeroFila) => {
+      fila.height = 22;
 
-        if (!celda) {
-          continue;
-        }
+      fila.eachCell((celda) => {
+        celda.font = { bold: numeroFila === 1 };
 
-        celda.s = {
-          font: {
-            bold: fila === 0,
-          },
-
-          fill: {
-            fgColor: {
-              rgb: fila === 0 ? "D9D9D9" : "FFFFFF",
-            },
-          },
-
-          alignment: {
-            vertical: "center",
-            horizontal: "left",
-            wrapText: true,
-          },
-
-          border: {
-            top: {
-              style: "thin",
-              color: { rgb: "B7B7B7" },
-            },
-            bottom: {
-              style: "thin",
-              color: { rgb: "B7B7B7" },
-            },
-            left: {
-              style: "thin",
-              color: { rgb: "B7B7B7" },
-            },
-            right: {
-              style: "thin",
-              color: { rgb: "B7B7B7" },
-            },
-          },
+        celda.fill = {
+          type: "pattern",
+          pattern: "solid",
+          fgColor: { argb: numeroFila === 1 ? "FFD9D9D9" : "FFFFFFFF" },
         };
-      }
-    }
 
-    hoja["!rows"] = [
-      { hpt: 22 },
-    ];
+        celda.alignment = {
+          vertical: "middle",
+          horizontal: "left",
+          wrapText: true,
+        };
 
-    const libro = XLSX.utils.book_new();
+        celda.border = {
+          top: { style: "thin", color: { argb: "FFB7B7B7" } },
+          bottom: { style: "thin", color: { argb: "FFB7B7B7" } },
+          left: { style: "thin", color: { argb: "FFB7B7B7" } },
+          right: { style: "thin", color: { argb: "FFB7B7B7" } },
+        };
+      });
+    });
 
-    XLSX.utils.book_append_sheet(
-      libro,
-      hoja,
-      "Pedidos"
-    );
+    const buffer = await libro.xlsx.writeBuffer();
+
+    const blob = new Blob([buffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
 
     const fecha = new Date().toISOString().slice(0, 10);
+    const url = URL.createObjectURL(blob);
 
-    XLSX.writeFile(
-      libro,
-      `pedidos-${fecha}.xlsx`
-    );
+    const enlace = document.createElement("a");
+    enlace.href = url;
+    enlace.download = `pedidos-${fecha}.xlsx`;
+
+    document.body.appendChild(enlace);
+    enlace.click();
+    document.body.removeChild(enlace);
+
+    URL.revokeObjectURL(url);
   }
     
   const rotiseriasFiltradas = [
