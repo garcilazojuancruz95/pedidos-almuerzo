@@ -349,10 +349,18 @@ export default function DailyOrders() {
 
     const hoja = libro.addWorksheet("Pedidos", {
       pageSetup: {
-        orientation: "landscape",
+        orientation: "portrait",
         fitToPage: true,
         fitToWidth: 1,
         fitToHeight: 0,
+        margins: {
+          left: 0.25,
+          right: 0.25,
+          top: 0.3,
+          bottom: 0.3,
+          header: 0.1,
+          footer: 0.1,
+        },
       },
     });
 
