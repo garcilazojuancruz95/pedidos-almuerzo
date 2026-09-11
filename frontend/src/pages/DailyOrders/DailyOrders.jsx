@@ -388,7 +388,6 @@ export default function DailyOrders() {
       fila.eachCell((celda) => {
         celda.font = {
           name: "Arial",
-          size: 12,
           bold: numeroFila === 1,
         };
 
