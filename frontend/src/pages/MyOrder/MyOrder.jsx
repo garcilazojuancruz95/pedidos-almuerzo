@@ -393,11 +393,44 @@ export default function MyOrder() {
         <p>No hay publicaciones disponibles para hoy.</p>
       ) : (
         <div className="my-order-publications">
-          {publicaciones.map((publicacion) => (
+          {publicaciones.map((publicacion) => {
+            const imagenes = (
+              publicacion.publicacion_imagenes || []
+            )
+              .slice()
+              .sort((a, b) => a.orden - b.orden);
+
+            const primeraImagen = imagenes[0];
+            const imagenesRestantes = imagenes.length - 1;
+
+            return (
             <div
               className="my-order-card"
               key={publicacion.id}
             >
+              {primeraImagen && (
+                <div
+                  className="my-order-thumbnail"
+                  onClick={() =>
+                    setImagenAmpliada(primeraImagen.url)
+                  }
+                >
+                  <img
+                    src={primeraImagen.url}
+                    alt={`Menú de ${
+                      publicacion.rotiserias?.nombre ||
+                      "rotisería"
+                    }`}
+                  />
+
+                  {imagenesRestantes > 0 && (
+                    <span className="my-order-thumbnail-badge">
+                      +{imagenesRestantes}
+                    </span>
+                  )}
+                </div>
+              )}
+
               <div className="my-order-header">
                 <h2>
                   🍽{" "}
@@ -415,27 +448,6 @@ export default function MyOrder() {
                   })}
                 </div>
               </div>
-
-              {publicacion.publicacion_imagenes?.length > 0 && (
-                <div className="my-order-images">
-                  {publicacion.publicacion_imagenes
-                    .slice()
-                    .sort((a, b) => a.orden - b.orden)
-                    .map((imagen) => (
-                      <img
-                        key={imagen.id}
-                        src={imagen.url}
-                        alt={`Menú de ${
-                          publicacion.rotiserias?.nombre ||
-                          "rotisería"
-                        }`}
-                        onClick={() =>
-                          setImagenAmpliada(imagen.url)
-                        }
-                      />
-                    ))}
-                </div>
-              )}
 
               {publicacion.menu_texto && (
                 <div className="my-order-menu">
@@ -491,7 +503,8 @@ export default function MyOrder() {
                 </button>
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
       )}
 

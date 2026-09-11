@@ -7,8 +7,8 @@
 }
 
 .my-order-publications {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 20px;
 }
 
@@ -17,6 +17,44 @@
   border-radius: 10px;
   padding: 24px;
   box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+}
+
+.my-order-thumbnail {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  cursor: zoom-in;
+}
+
+.my-order-thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.2s ease;
+}
+
+.my-order-thumbnail:hover img {
+  transform: scale(1.04);
+}
+
+.my-order-thumbnail-badge {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+
+  padding: 3px 9px;
+  border-radius: 999px;
+
+  background: rgba(0, 0, 0, 0.7);
+  color: #ffffff;
+
+  font-size: 13px;
+  font-weight: 600;
 }
 
 .my-order-header {
@@ -30,35 +68,14 @@
 
 .my-order-header h2 {
   margin: 0;
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 700;
+  color: var(--color-primary);
 }
 
 .my-order-fecha {
   color: #666;
   font-size: 14px;
-}
-
-.my-order-images {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 18px;
-}
-
-.my-order-images img {
-  width: 360px;
-  max-width: 100%;
-  height: auto;
-  border-radius: 8px;
-  object-fit: contain;
-  cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.my-order-images img:hover {
-  transform: scale(1.02);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
 }
 
 .my-order-menu {
@@ -197,22 +214,6 @@
   cursor: not-allowed;
 }
 
-.my-order-images img {
-  width: 360px;
-  max-width: 100%;
-  height: auto;
-  border-radius: 8px;
-  object-fit: contain;
-  cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.my-order-images img:hover {
-  transform: scale(1.02);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
-}
-
-
 @media (max-width: 600px) {
   .my-order-card {
     padding: 16px;
@@ -224,10 +225,6 @@
 
   .my-order-header h2 {
     font-size: 20px;
-  }
-
-  .my-order-images img {
-    width: 100%;
   }
 
   .my-order-form button {
