@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import "./Header.css";
+import { LogOut } from "lucide-react";
 
 import { signOut } from "../../../services/auth.service";
 import { useAuth } from "../../../contexts/AuthContext";
@@ -208,8 +209,13 @@ export default function Header() {
             : ""}
         </span>
 
-        <button onClick={handleLogout}>
-          Salir
+        <button
+          onClick={handleLogout}
+          className="logout-button"
+          aria-label="Salir"
+        >
+          <LogOut size={18} className="logout-icon" />
+          <span className="logout-text">Salir</span>
         </button>
       </div>
       <ConfirmModal
