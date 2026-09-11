@@ -405,6 +405,24 @@ export default function MyOrder() {
               className="my-order-card"
               key={publicacion.id}
             >
+              <div className="my-order-header">
+                <h2>
+                  🍽{" "}
+                  {publicacion.rotiserias?.nombre ||
+                    "Sin rotisería"}
+                </h2>
+
+                <div className="my-order-fecha">
+                  {new Date(
+                    `${publicacion.fecha}T00:00:00`
+                  ).toLocaleDateString("es-AR", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                  })}
+                </div>
+              </div>
+
               {imagenes.length > 0 && (
                 <div className="my-order-thumbnails">
                   {imagenes.map((imagen) => (
@@ -426,24 +444,6 @@ export default function MyOrder() {
                   ))}
                 </div>
               )}
-
-              <div className="my-order-header">
-                <h2>
-                  🍽{" "}
-                  {publicacion.rotiserias?.nombre ||
-                    "Sin rotisería"}
-                </h2>
-
-                <div className="my-order-fecha">
-                  {new Date(
-                    `${publicacion.fecha}T00:00:00`
-                  ).toLocaleDateString("es-AR", {
-                    day: "2-digit",
-                    month: "2-digit",
-                    year: "numeric",
-                  })}
-                </div>
-              </div>
 
               {publicacion.menu_texto && (
                 <div className="my-order-menu">

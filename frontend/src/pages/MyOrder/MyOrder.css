@@ -32,7 +32,7 @@
   position: relative;
   flex: 1 1 45%;
   min-width: 110px;
-  aspect-ratio: 4 / 3;
+  height: 170px;
   overflow: hidden;
   border-radius: 8px;
   cursor: zoom-in;
