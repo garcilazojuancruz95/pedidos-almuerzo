@@ -44,6 +44,7 @@ export default function Publications() {
   const [modalMensajeAbierto, setModalMensajeAbierto] = useState(false);
   const [modalMensajeTitulo, setModalMensajeTitulo] = useState("");
   const [modalMensajeTexto, setModalMensajeTexto] = useState("");
+  const [modalMensajeTipo, setModalMensajeTipo] = useState("error");
   const [formulario, setFormulario] = useState({
     rotiseriaId: "",
     menuTexto: "",
@@ -124,9 +125,10 @@ export default function Publications() {
     );
   }
 
-  function mostrarMensaje(titulo, mensaje) {
+  function mostrarMensaje(titulo, mensaje, tipo = "error") {
     setModalMensajeTitulo(titulo);
     setModalMensajeTexto(mensaje);
+    setModalMensajeTipo(tipo);
     setModalMensajeAbierto(true);
   }
 
@@ -277,7 +279,8 @@ export default function Publications() {
 
       mostrarMensaje(
         "Publicación actualizada",
-        "La publicación se actualizó correctamente."
+        "La publicación se actualizó correctamente.",
+        "exito"
       );
     } catch (error) {
       console.error("Error al actualizar publicación:", error);
@@ -578,6 +581,7 @@ export default function Publications() {
         abierto={modalPublicacionExistente}
         titulo="Publicación existente"
         mensaje={mensajePublicacionExistente}
+        tipo="advertencia"
         textoConfirmar="Entendido"
         textoCancelar=""
         onConfirm={() => setModalPublicacionExistente(false)}
@@ -587,6 +591,7 @@ export default function Publications() {
         abierto={modalExitoAbierto}
         titulo="Publicación creada"
         mensaje="La publicación se creó correctamente."
+        tipo="exito"
         textoConfirmar="Entendido"
         textoCancelar=""
         onConfirm={() => {
@@ -602,6 +607,7 @@ export default function Publications() {
         abierto={modalMensajeAbierto}
         titulo={modalMensajeTitulo}
         mensaje={modalMensajeTexto}
+        tipo={modalMensajeTipo}
         textoConfirmar="Entendido"
         textoCancelar=""
         onConfirm={() => setModalMensajeAbierto(false)}

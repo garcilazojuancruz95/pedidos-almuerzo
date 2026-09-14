@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./DailyOrders.css";
 import ExcelJS from "exceljs";
 import { Search, Plus, FileSpreadsheet, Printer } from "lucide-react";
 import { normalizarTexto } from "../../lib/texto";
+import ConfirmModal from "../../components/common/ConfirmModal/ConfirmModal";
 
 import {
   obtenerPedidosDelDia,
@@ -68,6 +69,39 @@ export default function DailyOrders() {
   const [pestanaPendientes, setPestanaPendientes] = useState("pendientes");
   const [pendientesExpandido, setPendientesExpandido] = useState(false);
   const [refrescando, setRefrescando] = useState(false);
+  const [modalMensajeAbierto, setModalMensajeAbierto] = useState(false);
+  const [modalMensajeTitulo, setModalMensajeTitulo] = useState("");
+  const [modalMensajeTexto, setModalMensajeTexto] = useState("");
+  const [modalMensajeTipo, setModalMensajeTipo] = useState("error");
+  const [mostrarMenuExportar, setMostrarMenuExportar] = useState(false);
+  const exportMenuRef = useRef(null);
+
+  useEffect(() => {
+    if (!mostrarMenuExportar) {
+      return;
+    }
+
+    function manejarClickFuera(event) {
+      if (
+        exportMenuRef.current &&
+        !exportMenuRef.current.contains(event.target)
+      ) {
+        setMostrarMenuExportar(false);
+      }
+    }
+
+    document.addEventListener("mousedown", manejarClickFuera);
+
+    return () =>
+      document.removeEventListener("mousedown", manejarClickFuera);
+  }, [mostrarMenuExportar]);
+
+  function mostrarMensaje(titulo, mensaje, tipo = "error") {
+    setModalMensajeTitulo(titulo);
+    setModalMensajeTexto(mensaje);
+    setModalMensajeTipo(tipo);
+    setModalMensajeAbierto(true);
+  }
 
   function solicitarCargaPedido() {
     const nuevosErrores = {
@@ -136,7 +170,10 @@ export default function DailyOrders() {
 
     } catch (error) {
       console.error("Error al cargar pedido:", error);
-      alert("No se pudo cargar el pedido.");
+      mostrarMensaje(
+        "Error al cargar pedido",
+        "No se pudo cargar el pedido."
+      );
     }
   }
 
@@ -144,7 +181,10 @@ export default function DailyOrders() {
     const texto = textoEdicionPedido.trim();
 
     if (!texto) {
-      alert("El pedido no puede estar vacío.");
+      mostrarMensaje(
+        "Pedido vacío",
+        "El pedido no puede estar vacío."
+      );
       return;
     }
 
@@ -162,7 +202,10 @@ export default function DailyOrders() {
       setTextoEdicionPedido("");
     } catch (error) {
       console.error("Error al actualizar pedido:", error);
-      alert("No se pudo actualizar el pedido.");
+      mostrarMensaje(
+        "Error al actualizar pedido",
+        "No se pudo actualizar el pedido."
+      );
     }
   }
 
@@ -220,7 +263,10 @@ export default function DailyOrders() {
       setPedidoAEliminar(null);
     } catch (error) {
       console.error("Error al eliminar pedido:", error);
-      alert("No se pudo eliminar el pedido.");
+      mostrarMensaje(
+        "Error al eliminar pedido",
+        "No se pudo eliminar el pedido."
+      );
     }
   }
 
@@ -235,7 +281,10 @@ export default function DailyOrders() {
       await cargarDatos();
     } catch (error) {
       console.error("Error al cambiar estado de home office:", error);
-      alert("No se pudo actualizar el estado del empleado.");
+      mostrarMensaje(
+        "Error al actualizar estado",
+        "No se pudo actualizar el estado del empleado."
+      );
     }
   }
 
@@ -334,15 +383,32 @@ export default function DailyOrders() {
     return <p>{error}</p>;
   }
 
+  const conteoPedidosPorUsuario = pedidos.reduce((conteo, pedido) => {
+    conteo[pedido.usuario_id] = (conteo[pedido.usuario_id] || 0) + 1;
+    return conteo;
+  }, {});
+
+  const pedidosDuplicados = pedidos.filter(
+    (pedido) => conteoPedidosPorUsuario[pedido.usuario_id] > 1
+  );
+
   const pedidosFiltrados =
-    filtroRotiseria === ""
+    filtroRotiseria === "duplicados"
+      ? pedidosDuplicados
+      : filtroRotiseria === ""
       ? pedidos
       : pedidos.filter(
           (pedido) => pedido.rotiseria_id === filtroRotiseria
         );
 
-  async function exportarExcel() {
-    if (pedidosFiltrados.length === 0) {
+  async function exportarExcel(rotiseriaId) {
+    const pedidosParaExportar = rotiseriaId
+      ? pedidos.filter(
+          (pedido) => pedido.rotiseria_id === rotiseriaId
+        )
+      : pedidos;
+
+    if (pedidosParaExportar.length === 0) {
       return;
     }
 
@@ -372,7 +438,7 @@ export default function DailyOrders() {
       { header: "Rotisería", key: "rotiseria", width: 22 },
     ];
 
-    pedidosFiltrados.forEach((pedido) => {
+    pedidosParaExportar.forEach((pedido) => {
       hoja.addRow({
         piso: obtenerPiso(pedido),
         nombre: pedido.usuarios
@@ -444,10 +510,23 @@ export default function DailyOrders() {
         },
       ])
     ).values(),
-  ];
+  ].map((rotiseria) => ({
+    ...rotiseria,
+    cantidad: pedidos.filter(
+      (pedido) => pedido.rotiseria_id === rotiseria.id
+    ).length,
+  }));
 
   const pedidosAgrupados =
-    filtroRotiseria === ""
+    filtroRotiseria === "duplicados"
+      ? [
+          {
+            id: "duplicados",
+            nombre: "Pedidos duplicados",
+            pedidos: pedidosFiltrados,
+          },
+        ]
+      : filtroRotiseria === ""
       ? [
           {
             id: "todas",
@@ -483,15 +562,44 @@ export default function DailyOrders() {
             <span className="btn-icon-label">Cargar pedido</span>
           </button>
 
-          <button
-            className="btn-icon"
-            onClick={exportarExcel}
-            title="Exportar Excel"
-            aria-label="Exportar Excel"
-          >
-            <FileSpreadsheet size={18} />
-            <span className="btn-icon-label">Exportar Excel</span>
-          </button>
+          <div className="export-menu-wrapper" ref={exportMenuRef}>
+            <button
+              className="btn-icon"
+              onClick={() =>
+                setMostrarMenuExportar((abierto) => !abierto)
+              }
+              title="Exportar Excel"
+              aria-label="Exportar Excel"
+            >
+              <FileSpreadsheet size={18} />
+              <span className="btn-icon-label">Exportar Excel</span>
+            </button>
+
+            {mostrarMenuExportar && (
+              <ul className="export-menu-options">
+                <li
+                  onClick={() => {
+                    exportarExcel();
+                    setMostrarMenuExportar(false);
+                  }}
+                >
+                  Todas
+                </li>
+
+                {rotiseriasFiltradas.map((rotiseria) => (
+                  <li
+                    key={rotiseria.id}
+                    onClick={() => {
+                      exportarExcel(rotiseria.id);
+                      setMostrarMenuExportar(false);
+                    }}
+                  >
+                    {rotiseria.nombre}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
 
           <button
             className="btn-icon"
@@ -791,7 +899,7 @@ export default function DailyOrders() {
           className={filtroRotiseria === "" ? "active" : ""}
           onClick={() => setFiltroRotiseria("")}
         >
-          Todas
+          Todas ({pedidos.length})
         </button>
 
         {rotiseriasFiltradas.map((rotiseria) => (
@@ -806,9 +914,23 @@ export default function DailyOrders() {
               setFiltroRotiseria(rotiseria.id)
             }
           >
-            {rotiseria.nombre}
+            {rotiseria.nombre} ({rotiseria.cantidad})
           </button>
         ))}
+
+        <button
+          className={
+            "tabs-duplicados" +
+            (filtroRotiseria === "duplicados" ? " active" : "")
+          }
+          onClick={() =>
+            setFiltroRotiseria(
+              filtroRotiseria === "duplicados" ? "" : "duplicados"
+            )
+          }
+        >
+          Duplicados ({pedidosDuplicados.length})
+        </button>
       </div>
 
       <div className="orders-groups">
@@ -1093,6 +1215,17 @@ export default function DailyOrders() {
           </div>
         </div>
       )}
+
+      <ConfirmModal
+        abierto={modalMensajeAbierto}
+        titulo={modalMensajeTitulo}
+        mensaje={modalMensajeTexto}
+        tipo={modalMensajeTipo}
+        textoConfirmar="Entendido"
+        textoCancelar=""
+        onConfirm={() => setModalMensajeAbierto(false)}
+        onCancel={() => setModalMensajeAbierto(false)}
+      />
     </div>
   );
 }

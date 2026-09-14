@@ -58,10 +58,12 @@ export default function Usuarios() {
   const [modalMensajeAbierto, setModalMensajeAbierto] = useState(false);
   const [modalMensajeTitulo, setModalMensajeTitulo] = useState("");
   const [modalMensajeTexto, setModalMensajeTexto] = useState("");
+  const [modalMensajeTipo, setModalMensajeTipo] = useState("error");
 
-  function mostrarMensaje(titulo, mensaje) {
+  function mostrarMensaje(titulo, mensaje, tipo = "error") {
     setModalMensajeTitulo(titulo);
     setModalMensajeTexto(mensaje);
+    setModalMensajeTipo(tipo);
     setModalMensajeAbierto(true);
   }
 
@@ -179,7 +181,8 @@ export default function Usuarios() {
 
       mostrarMensaje(
         "Empleado creado",
-        "Empleado creado correctamente."
+        "Empleado creado correctamente.",
+        "exito"
       );
     } catch (error) {
       console.error("Error al crear usuario:", error);
@@ -276,7 +279,8 @@ export default function Usuarios() {
 
       mostrarMensaje(
         "Nómina importada",
-        "Nómina importada correctamente."
+        "Nómina importada correctamente.",
+        "exito"
       );
     } catch (error) {
       console.error("Error al importar nómina:", error);
@@ -774,6 +778,7 @@ export default function Usuarios() {
         abierto={modalMensajeAbierto}
         titulo={modalMensajeTitulo}
         mensaje={modalMensajeTexto}
+        tipo={modalMensajeTipo}
         textoConfirmar="Entendido"
         textoCancelar=""
         onConfirm={() => setModalMensajeAbierto(false)}
