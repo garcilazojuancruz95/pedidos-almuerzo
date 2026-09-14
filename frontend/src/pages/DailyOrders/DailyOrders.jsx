@@ -388,9 +388,18 @@ export default function DailyOrders() {
     return conteo;
   }, {});
 
-  const pedidosDuplicados = pedidos.filter(
-    (pedido) => conteoPedidosPorUsuario[pedido.usuario_id] > 1
-  );
+  const pedidosDuplicados = pedidos
+    .filter(
+      (pedido) => conteoPedidosPorUsuario[pedido.usuario_id] > 1
+    )
+    .sort((a, b) => {
+      const nombreA = `${a.usuarios?.nombre || ""} ${a.usuarios?.apellido || ""}`;
+      const nombreB = `${b.usuarios?.nombre || ""} ${b.usuarios?.apellido || ""}`;
+
+      return nombreA.localeCompare(nombreB, "es", {
+        sensitivity: "base",
+      });
+    });
 
   const pedidosFiltrados =
     filtroRotiseria === "duplicados"
