@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import "./DailyOrders.css";
 import ExcelJS from "exceljs";
 import { Search, Plus, FileSpreadsheet, Printer } from "lucide-react";
+import { normalizarTexto } from "../../lib/texto";
 
 import {
   obtenerPedidosDelDia,
@@ -531,9 +532,9 @@ export default function DailyOrders() {
                   {usuarios
                     .filter((usuario) => usuario.activo)
                     .filter((usuario) =>
-                      `${usuario.nombre} ${usuario.apellido}`
-                        .toLowerCase()
-                        .includes(busquedaEmpleado.toLowerCase())
+                      normalizarTexto(
+                        `${usuario.nombre} ${usuario.apellido}`
+                      ).includes(normalizarTexto(busquedaEmpleado))
                     )
                     .sort((a, b) => {
                       const nombreA = `${a.nombre || ""} ${a.apellido || ""}`;

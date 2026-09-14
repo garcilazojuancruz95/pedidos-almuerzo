@@ -10,6 +10,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 20px;
+  align-items: start;
 }
 
 .my-order-card {
@@ -79,6 +80,31 @@
   line-height: 1.6;
   margin-bottom: 18px;
   font-size: 15px;
+
+  position: relative;
+  max-height: 140px;
+  overflow: hidden;
+  transition: max-height .25s ease;
+}
+
+.my-order-menu::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 32px;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0), #ffffff);
+  pointer-events: none;
+  transition: opacity .25s ease;
+}
+
+.my-order-card:hover .my-order-menu {
+  max-height: 1000px;
+}
+
+.my-order-card:hover .my-order-menu::after {
+  opacity: 0;
 }
 
 .my-order-aclaraciones {

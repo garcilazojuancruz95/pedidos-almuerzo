@@ -11,6 +11,8 @@ import {
 } from "../../services/usuario.service";
 import "./Usuarios.css";
 import * as XLSX from "xlsx";
+import { normalizarTexto } from "../../lib/texto";
+import ConfirmModal from "../../components/common/ConfirmModal/ConfirmModal";
 
 export default function Usuarios() {
   const { session } = useAuth();
@@ -52,6 +54,16 @@ export default function Usuarios() {
     campo: "nombre",
     direccion: "asc",
   });
+
+  const [modalMensajeAbierto, setModalMensajeAbierto] = useState(false);
+  const [modalMensajeTitulo, setModalMensajeTitulo] = useState("");
+  const [modalMensajeTexto, setModalMensajeTexto] = useState("");
+
+  function mostrarMensaje(titulo, mensaje) {
+    setModalMensajeTitulo(titulo);
+    setModalMensajeTexto(mensaje);
+    setModalMensajeAbierto(true);
+  }
 
   function comenzarEdicion(usuario) {
     setEditandoId(usuario.id);
@@ -120,7 +132,10 @@ export default function Usuarios() {
       setEditandoId(null);
     } catch (error) {
       console.error("Error al actualizar usuario:", error);
-      alert("No se pudo actualizar el usuario.");
+      mostrarMensaje(
+        "Error al actualizar usuario",
+        "No se pudo actualizar el usuario."
+      );
     }
   }
 
@@ -162,10 +177,16 @@ export default function Usuarios() {
 
       setMostrarFormulario(false);
 
-      alert("Empleado creado correctamente.");
+      mostrarMensaje(
+        "Empleado creado",
+        "Empleado creado correctamente."
+      );
     } catch (error) {
       console.error("Error al crear usuario:", error);
-      alert("No se pudo crear el empleado.");
+      mostrarMensaje(
+        "Error al crear empleado",
+        "No se pudo crear el empleado."
+      );
     }
   }
 
@@ -212,7 +233,10 @@ export default function Usuarios() {
       );
     } catch (error) {
       console.error("Error al cambiar estado:", error);
-      alert("No se pudo cambiar el estado del usuario.");
+      mostrarMensaje(
+        "Error al cambiar estado",
+        "No se pudo cambiar el estado del usuario."
+      );
     }
   }
 
@@ -250,10 +274,16 @@ export default function Usuarios() {
       const usuariosActualizados = await obtenerUsuarios();
       setUsuarios(usuariosActualizados);
 
-      alert("Nómina importada correctamente.");
+      mostrarMensaje(
+        "Nómina importada",
+        "Nómina importada correctamente."
+      );
     } catch (error) {
       console.error("Error al importar nómina:", error);
-      alert("Ocurrió un error al importar la nómina.");
+      mostrarMensaje(
+        "Error al importar nómina",
+        "Ocurrió un error al importar la nómina."
+      );
     }
 
     event.target.value = "";
@@ -269,8 +299,9 @@ export default function Usuarios() {
 
   const usuariosFiltrados = usuarios
     .filter((usuario) => {
-      const nombreCompleto =
-        `${usuario.nombre || ""} ${usuario.apellido || ""}`.toLowerCase();
+      const nombreCompleto = normalizarTexto(
+        `${usuario.nombre || ""} ${usuario.apellido || ""}`
+      );
 
       const email =
         (usuario.email || "").toLowerCase();
@@ -285,7 +316,7 @@ export default function Usuarios() {
         usuario.activo ? "activo" : "inactivo";
 
       return (
-        nombreCompleto.includes(filtros.nombre.toLowerCase()) &&
+        nombreCompleto.includes(normalizarTexto(filtros.nombre)) &&
         email.includes(filtros.email.toLowerCase()) &&
         (!filtros.empresa || empresa === filtros.empresa.toLowerCase()) &&
         (!filtros.rol || rol === filtros.rol.toLowerCase()) &&
@@ -738,6 +769,16 @@ export default function Usuarios() {
           </tbody>
         </table>
       </div>
+
+      <ConfirmModal
+        abierto={modalMensajeAbierto}
+        titulo={modalMensajeTitulo}
+        mensaje={modalMensajeTexto}
+        textoConfirmar="Entendido"
+        textoCancelar=""
+        onConfirm={() => setModalMensajeAbierto(false)}
+        onCancel={() => setModalMensajeAbierto(false)}
+      />
     </div>
   );
 }
