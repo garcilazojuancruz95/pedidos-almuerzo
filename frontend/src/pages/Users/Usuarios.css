@@ -222,3 +222,26 @@
   color: #999;
   font-size: 18px;
 }
+
+@media (max-width: 600px) {
+  .usuarios-page {
+    padding: 16px;
+  }
+
+  .usuarios-header {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .usuarios-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .usuarios-table-container {
+    overflow-x: auto;
+  }
+
+  .usuarios-table {
+    min-width: 720px;
+  }
+}

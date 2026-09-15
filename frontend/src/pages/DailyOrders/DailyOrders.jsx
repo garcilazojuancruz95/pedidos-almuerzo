@@ -69,6 +69,7 @@ export default function DailyOrders() {
   const [pestanaPendientes, setPestanaPendientes] = useState("pendientes");
   const [pendientesExpandido, setPendientesExpandido] = useState(false);
   const [refrescando, setRefrescando] = useState(false);
+  const [busquedaNombrePedido, setBusquedaNombrePedido] = useState("");
   const [modalMensajeAbierto, setModalMensajeAbierto] = useState(false);
   const [modalMensajeTitulo, setModalMensajeTitulo] = useState("");
   const [modalMensajeTexto, setModalMensajeTexto] = useState("");
@@ -401,14 +402,19 @@ export default function DailyOrders() {
       });
     });
 
-  const pedidosFiltrados =
+  const pedidosFiltrados = (
     filtroRotiseria === "duplicados"
       ? pedidosDuplicados
       : filtroRotiseria === ""
       ? pedidos
       : pedidos.filter(
           (pedido) => pedido.rotiseria_id === filtroRotiseria
-        );
+        )
+  ).filter((pedido) =>
+    normalizarTexto(
+      `${pedido.usuarios?.nombre || ""} ${pedido.usuarios?.apellido || ""}`
+    ).includes(normalizarTexto(busquedaNombrePedido))
+  );
 
   async function exportarExcel(rotiseriaId) {
     const pedidosParaExportar = rotiseriaId
@@ -940,6 +946,21 @@ export default function DailyOrders() {
         >
           Duplicados ({pedidosDuplicados.length})
         </button>
+      </div>
+
+      <div className="orders-search">
+        <Search size={16} className="orders-search-icon" />
+
+        <input
+          type="text"
+          placeholder="Buscar empleado..."
+          value={busquedaNombrePedido}
+          onChange={(event) =>
+            setBusquedaNombrePedido(event.target.value)
+          }
+          autoComplete="off"
+          name="busqueda-empleado-pedidos"
+        />
       </div>
 
       <div className="orders-groups">

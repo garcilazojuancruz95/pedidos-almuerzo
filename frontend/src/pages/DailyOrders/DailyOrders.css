@@ -195,6 +195,37 @@
     color: white;
 }
 
+.orders-search {
+    position: relative;
+    max-width: 320px;
+    margin-bottom: 20px;
+}
+
+.orders-search-icon {
+    position: absolute;
+    top: 50%;
+    left: 12px;
+    transform: translateY(-50%);
+    color: #888;
+    pointer-events: none;
+}
+
+.orders-search input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px 12px 10px 38px;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 14px;
+    background: white;
+}
+
+.orders-search input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+}
+
 table {
     width: 100%;
     background: white;
