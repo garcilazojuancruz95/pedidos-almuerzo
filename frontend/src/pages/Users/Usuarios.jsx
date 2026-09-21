@@ -11,6 +11,7 @@ import {
 } from "../../services/usuario.service";
 import "./Usuarios.css";
 import * as XLSX from "xlsx";
+import { UserPlus } from "lucide-react";
 import { normalizarTexto } from "../../lib/texto";
 import ConfirmModal from "../../components/common/ConfirmModal/ConfirmModal";
 
@@ -400,7 +401,8 @@ export default function Usuarios() {
             className="usuarios-btn-nuevo"
             onClick={() => setMostrarFormulario(true)}
           >
-            + Nuevo empleado
+            <UserPlus size={18} />
+            Nuevo empleado
           </button>
         </div>
       </div>
