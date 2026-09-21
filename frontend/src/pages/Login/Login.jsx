@@ -24,7 +24,7 @@ export default function Login() {
 
         <h1>Plataforma de Pedidos de Almuerzo</h1>
 
-        <p>Iniciá sesión con tu cuenta de Google Workspace.</p>
+        <p>Iniciá sesión con tu cuenta de Google.</p>
 
         <button onClick={handleLogin}>
           Iniciar sesión con Google
