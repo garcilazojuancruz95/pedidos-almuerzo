@@ -485,7 +485,7 @@ export default function MyOrder() {
 
                 {!enHomeOffice && horarioLimiteVencido && (
                   <p className="home-office-message">
-                    El horario para realizar pedidos (hasta las 11:15) ya finalizó.
+                    El horario para realizar pedidos (hasta las 11:00) ya finalizó.
                   </p>
                 )}
 

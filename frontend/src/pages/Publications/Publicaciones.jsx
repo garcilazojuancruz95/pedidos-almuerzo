@@ -117,7 +117,7 @@ export default function Publications() {
 
   function compartirPorWhatsApp() {
     const mensaje =
-      "🍽️ Ya están las opciones de almuerzo de hoy. Pedí antes de las 11:15 ⏰ en https://pedidos.nasini.com.ar";
+      "🍽️ Ya están las opciones de almuerzo de hoy. Pedí antes de las 11:00 ⏰ en https://pedidos.nasini.com.ar";
 
     window.open(
       `https://wa.me/?text=${encodeURIComponent(mensaje)}`,

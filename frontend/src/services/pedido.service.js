@@ -1,6 +1,6 @@
 import { supabase } from "../lib/supabase";
 
-const HORA_LIMITE_PEDIDOS = "11:15";
+const HORA_LIMITE_PEDIDOS = "11:00";
 
 function obtenerHoraActualArgentina() {
   return new Intl.DateTimeFormat("en-GB", {
