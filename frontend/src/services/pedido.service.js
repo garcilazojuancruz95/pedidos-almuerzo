@@ -2,6 +2,12 @@ import { supabase } from "../lib/supabase";
 
 const HORA_LIMITE_PEDIDOS = "11:00";
 
+export function obtenerFechaHoyArgentina() {
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: "America/Argentina/Buenos_Aires",
+  }).format(new Date());
+}
+
 function obtenerHoraActualArgentina() {
   return new Intl.DateTimeFormat("en-GB", {
     timeZone: "America/Argentina/Buenos_Aires",
@@ -82,6 +88,30 @@ export async function crearPedido({
 
   return data;
 }
+export async function obtenerPedidosFijos() {
+  const { data, error } = await supabase
+    .from("pedidos_fijos")
+    .select("*")
+    .eq("activo", true);
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+}
+
+export async function omitirPedidoFijoHoy(usuarioId) {
+  const { error } = await supabase
+    .from("pedidos_fijos")
+    .update({ omitido_el: obtenerFechaHoyArgentina() })
+    .eq("usuario_id", usuarioId);
+
+  if (error) {
+    throw error;
+  }
+}
+
 export async function obtenerMisPedidosDelDia(usuarioId) {
   const fechaHoy = new Intl.DateTimeFormat("en-CA", {
     timeZone: "America/Argentina/Buenos_Aires",

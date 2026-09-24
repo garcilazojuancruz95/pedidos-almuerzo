@@ -10,6 +10,9 @@ import {
   crearPedido,
   actualizarPedido,
   eliminarPedido,
+  obtenerPedidosFijos,
+  omitirPedidoFijoHoy,
+  obtenerFechaHoyArgentina,
 } from "../../services/pedido.service";
 
 import {
@@ -222,6 +225,7 @@ export default function DailyOrders() {
 
     try {
       await eliminarPedido(pedidoAEliminar.id);
+      await omitirPedidoFijoHoy(pedidoAEliminar.usuario_id);
 
       const pedidosActualizados = await obtenerPedidosDelDia();
 
@@ -299,14 +303,15 @@ export default function DailyOrders() {
         usuariosData,
         publicacionesData,
         homeOfficeData,
+        pedidosFijosData,
       ] = await Promise.all([
         obtenerPedidosDelDia(),
         obtenerUsuarios(),
         obtenerPublicaciones(),
         obtenerHomeOfficeDelDia(),
+        obtenerPedidosFijos(),
       ]);
 
-      setPedidos(pedidosData);
       setUsuarios(usuariosData);
       setPublicaciones(publicacionesData);
 
@@ -329,18 +334,56 @@ export default function DailyOrders() {
 
       setUsuariosEnCasa(empleadosEnCasa);
 
-      const empleadosActivos = usuariosData.filter(
-        (usuario) =>
-          usuario.activo &&
-          usuario.roles?.nombre === "Empleado"
-      );
-
       const usuariosConPedido = new Set(
         pedidosData.map((pedido) => pedido.usuario_id)
       );
 
       const usuariosIdsEnCasa = new Set(
         empleadosEnCasa.map((empleado) => empleado.id)
+      );
+
+      const fechaHoy = obtenerFechaHoyArgentina();
+
+      const pedidosFijosPendientes = pedidosFijosData.filter(
+        (fijo) =>
+          !usuariosConPedido.has(fijo.usuario_id) &&
+          !usuariosIdsEnCasa.has(fijo.usuario_id) &&
+          fijo.omitido_el !== fechaHoy
+      );
+
+      let pedidosCompletos = pedidosData;
+
+      if (pedidosFijosPendientes.length > 0) {
+        try {
+          await Promise.all(
+            pedidosFijosPendientes.map((fijo) =>
+              crearPedido({
+                usuarioId: fijo.usuario_id,
+                rotiseriaId: fijo.rotiseria_id,
+                pedido: fijo.pedido,
+              })
+            )
+          );
+
+          pedidosCompletos = await obtenerPedidosDelDia();
+
+          pedidosFijosPendientes.forEach((fijo) =>
+            usuariosConPedido.add(fijo.usuario_id)
+          );
+        } catch (error) {
+          console.error(
+            "Error al autocompletar pedidos fijos:",
+            error
+          );
+        }
+      }
+
+      setPedidos(pedidosCompletos);
+
+      const empleadosActivos = usuariosData.filter(
+        (usuario) =>
+          usuario.activo &&
+          usuario.roles?.nombre === "Empleado"
       );
 
       const pendientes = empleadosActivos

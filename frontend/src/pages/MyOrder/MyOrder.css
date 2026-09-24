@@ -2,6 +2,17 @@
   margin-bottom: 30px;
 }
 
+.horario-limite-aviso {
+  margin: 0 0 24px 0;
+  padding: 10px 16px;
+  background: var(--color-primary-light);
+  border: 1px solid var(--color-primary-border);
+  border-radius: 8px;
+  color: var(--color-primary);
+  font-size: 14px;
+  font-weight: 600;
+}
+
 .my-order-publications {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 420px));
@@ -62,6 +73,12 @@
 .my-order-header h2 {
   margin: 0;
   font-size: 22px;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.my-order-alias {
+  font-size: 14px;
   font-weight: 700;
   color: var(--color-primary);
 }

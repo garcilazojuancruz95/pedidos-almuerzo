@@ -34,8 +34,7 @@
   }
 
   .operator-layout-sidebar {
-    overflow-x: auto;
-    overflow-y: visible;
+    overflow: visible;
   }
 
   .operator-layout-main {

@@ -17,6 +17,10 @@ import {
 import ConfirmModal from "../../components/common/ConfirmModal/ConfirmModal";
 import ImageViewer from "../../components/common/ImageViewer/ImageViewer";
 
+const ALIAS_POR_ROTISERIA = {
+  "Don Viandero": "Brisari",
+};
+
 export default function MyOrder() {
   const [publicaciones, setPublicaciones] = useState([]);
   const [pedidos, setPedidos] = useState({});
@@ -389,6 +393,12 @@ export default function MyOrder() {
         <h1 className="page-title">Menú</h1>
       </div>
 
+      {!horarioLimiteVencido && (
+        <p className="horario-limite-aviso">
+          ⏰ Tenés tiempo de hacer tu pedido hasta las 11:00 hs.
+        </p>
+      )}
+
       {publicaciones.length === 0 ? (
         <p>No hay publicaciones disponibles para hoy.</p>
       ) : (
@@ -410,6 +420,12 @@ export default function MyOrder() {
                   🍽{" "}
                   {publicacion.rotiserias?.nombre ||
                     "Sin rotisería"}
+                  {ALIAS_POR_ROTISERIA[publicacion.rotiserias?.nombre] && (
+                    <span className="my-order-alias">
+                      {" "}
+                      ({ALIAS_POR_ROTISERIA[publicacion.rotiserias?.nombre]})
+                    </span>
+                  )}
                 </h2>
 
                 <div className="my-order-fecha">
