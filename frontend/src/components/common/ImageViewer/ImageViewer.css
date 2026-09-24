@@ -14,6 +14,12 @@
   background: rgba(0, 0, 0, 0.85);
 
   cursor: zoom-out;
+
+  /* Evita que un pellizco (pinch-zoom) sobre la imagen dispare el zoom
+     nativo del navegador en toda la pagina, que queda pegado incluso
+     despues de cerrar el visor. El zoom propio (botones +/-) no depende
+     de gestos tactiles, asi que no se pierde funcionalidad. */
+  touch-action: none;
 }
 
 .image-viewer-image {
@@ -28,6 +34,8 @@
   cursor: zoom-in;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
   transition: transform 0.1s ease-out;
+
+  touch-action: none;
 }
 
 .image-viewer-zoom-controls {
